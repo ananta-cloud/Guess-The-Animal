@@ -1,13 +1,5 @@
 #include "stack_operations.h"
 
-/**
- * @brief Mendorong (push) state sebuah node ke undo stack.
- * @param node Node yang dimodifikasi.
- * @param original_text Teks asli dari node.
- * @param original_yes Pointer yes asli.
- * @param original_no Pointer no asli.
- * @param operation_type Jenis operasi (misal: "LEARN").
- */
 void push_undo_state(TreeNodePtr node, const char* original_text, 
                      TreeNodePtr original_yes, TreeNodePtr original_no, 
                      const char* operation_type) {
@@ -29,10 +21,6 @@ void push_undo_state(TreeNodePtr node, const char* original_text,
     undo_stack_top = new_undo;
 }
 
-/**
- * @brief Mengambil (pop) state dari undo stack.
- * @return 1 jika berhasil, 0 jika stack kosong.
- */
 int pop_undo_state(TreeNodePtr* node, char* original_text, 
                    TreeNodePtr* original_yes, TreeNodePtr* original_no, 
                    char* operation_type) {
@@ -54,11 +42,6 @@ int pop_undo_state(TreeNodePtr* node, char* original_text,
     return 1; // Sukses
 }
 
-/**
- * @brief Mengembalikan operasi terakhir yang dilakukan.
- * @param root Root dari tree (tidak digunakan saat ini, tapi untuk masa depan).
- * @return 1 jika berhasil, 0 jika gagal.
- */
 int undo_last_operation(TreeNodePtr root) {
     if (is_undo_stack_empty()) {
         printf("Tidak ada operasi yang dapat dibatalkan!\n");
@@ -95,9 +78,6 @@ int undo_last_operation(TreeNodePtr root) {
     return 0;
 }
 
-/**
- * @brief Membersihkan semua item di undo stack.
- */
 void clear_undo_stack() {
     while (undo_stack_top != NULL) {
         UndoStack* temp = undo_stack_top;
@@ -106,10 +86,6 @@ void clear_undo_stack() {
     }
 }
 
-/**
- * @brief Mengecek apakah undo stack kosong.
- * @return 1 jika kosong, 0 jika tidak.
- */
 int is_undo_stack_empty() {
     return undo_stack_top == NULL;
 }
