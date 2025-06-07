@@ -10,22 +10,26 @@ void print_header(const char* title) {
     print_separator();
 }
 
-/**
- * @brief Menampilkan menu utama kepada pengguna, kini dengan opsi Admin.
- */
 void print_main_menu() {
     print_header("ANIMAL GUESSING GAME - MENU UTAMA");
-    printf("1. Mulai Permainan\n");
-    printf("2. Lihat Riwayat Permainan\n");
-    printf("3. Menu Admin\n");
-    printf("4. Keluar\n");
+    printf("1. Mulai Permainan Single Player\n");
+    printf("2. Mulai Permainan Multiplayer\n");
+    printf("3. Lihat Riwayat Permainan\n");
+    printf("4. Menu Admin\n");
+    printf("5. Keluar\n");
     print_separator();
-    printf("Pilih menu (1-4): ");
+    printf("Pilih menu (1-5): ");
 }
 
-/**
- * @brief Menampilkan menu admin.
- */
+void print_game_menu() {
+    print_header("MENU PERMAINAN");
+    printf("1. Main Sekali\n");
+    printf("2. Main Terus-menerus\n");
+    printf("3. Kembali ke Menu Utama\n");
+    print_separator();
+    printf("Pilih opsi (1-3): ");
+}
+
 void print_admin_menu() {
     print_header("MENU ADMIN");
     printf("1. Undo Operasi Terakhir\n");
@@ -34,11 +38,6 @@ void print_admin_menu() {
     printf("Pilih opsi (1-2): ");
 }
 
-/**
- * @brief Mendapatkan pilihan menu yang valid dari pengguna.
- * @param max_choice Angka pilihan maksimum yang valid.
- * @return Pilihan pengguna dalam bentuk integer.
- */
 int get_menu_choice(int max_choice) {
     char input[10];
     int choice;
@@ -54,34 +53,21 @@ int get_menu_choice(int max_choice) {
     }
 }
 
-/**
- * @brief Menampilkan pesan selamat datang saat program pertama kali dijalankan.
- */
 void print_welcome() {
     system("clear || cls"); // Membersihkan layar konsol
     print_header("SELAMAT DATANG DI ANIMAL GUESSING GAME!");
     printf("Pikirkan seekor hewan, dan saya akan mencoba menebaknya!\n\n");
 }
 
-/**
- * @brief Menampilkan pesan perpisahan sebelum program berakhir.
- */
 void print_goodbye() {
     print_header("TERIMA KASIH TELAH BERMAIN!");
 }
 
-/**
- * @brief Menjeda program dan menunggu input ENTER dari pengguna.
- */
 void ready() {
     printf("\nTekan ENTER untuk melanjutkan...");
     getchar();
 }
 
-/**
- * @brief Menanyakan kepada pengguna apakah mereka ingin bermain lagi.
- * @return 1 jika ya, 0 jika tidak.
- */
 int play_again() {
     printf("\nApakah Anda ingin bermain lagi? ");
     int answer = get_answer();
@@ -92,3 +78,30 @@ int play_again() {
     }
     return 0;
 }
+
+/**
+ * @brief Menginisialisasi semua sistem sebelum permainan dimulai.
+ */
+void initialize_system() {
+    printf("Menginisialisasi sistem...\n");
+    load_history_from_file();
+    // Inisialisasi pointer global sudah dilakukan di common_types.c
+    printf("Sistem berhasil diinisialisasi!\n\n");
+}
+
+/**
+ * @brief Membersihkan semua memori dan menyimpan data sebelum keluar.
+ */
+void cleanup_system() {
+    printf("Membersihkan sistem...\n");
+    save_history_to_file();
+    clear_game_history();
+    if (player_queue != NULL) {
+        clear_player_queue(player_queue);
+        free(player_queue);
+        player_queue = NULL;
+    }
+    clear_undo_stack();
+    printf("Sistem berhasil dibersihkan!\n");
+}
+

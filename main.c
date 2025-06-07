@@ -7,95 +7,98 @@
 // Variabel global untuk state permainan
 TreeNodePtr root = NULL;
 int game_counter = 1;
+int is_multiplayer = 0;
 
 // Prototipe fungsi lokal
-void play_game_session();
+void single_player_game();
+void multiplayer_game();
 void play_single_round();
+void handle_game_menu();
 void handle_admin_menu();
 
 int main() {
     int main_choice;
 
     print_welcome();
+    initialize_system();
     
     // Memuat database tree dan riwayat permainan saat program dimulai
     if (load_or_create_database(&root) != 0) {
         printf("Error: Gagal memuat database!\n");
         return 1;
     }
-    load_history_from_file();
-    // Set game_counter ke permainan berikutnya
-    if(game_history_head != NULL) {
-        GameHistory* current = game_history_head;
-        while(current->next != NULL) current = current->next;
-        game_counter = current->game_number + 1;
-    }
 
-    // Loop menu utama
     while (1) {
         print_main_menu();
-        main_choice = get_menu_choice(3);
+        main_choice = get_menu_choice(5);
         
         switch (main_choice) {
-            case 1:
-                play_game_session();
+            case 1: 
+                single_player_game(); 
                 break;
-            case 2:
-                display_game_history();
-                ready();
+            case 2: 
+                multiplayer_game(); 
                 break;
-            case 3:
-                handle_admin_menu(); // Panggil handler menu admin
+            case 3: 
+                display_game_history(); 
+                ready(); 
                 break;
-            case 4:
+            case 4: 
+                handle_admin_menu(); 
+                break;
+            case 5:
                 print_goodbye();
-                save_history_to_file();
-                auto_save_tree(root); // Pastikan tree juga tersimpan
+                cleanup_system();
                 free_tree(root);
-                clear_game_history();
-                clear_undo_stack(); // Bersihkan stack saat keluar
                 return 0;
-            default:
-                printf("Pilihan tidak valid!\n");
+            default: printf("Pilihan tidak valid!\n");
         }
     }
 }
 
-/**
- * @brief Menangani logika untuk menu admin.
- */
-void handle_admin_menu() {
-    int admin_choice;
-    print_admin_menu();
-    admin_choice = get_menu_choice(2);
-
-    switch (admin_choice) {
-        case 1:
-            // Lakukan operasi undo
-            if (undo_last_operation(root)) {
-                printf("Perubahan berhasil disimpan kembali ke file.\n");
-                auto_save_tree(root); // Simpan tree setelah undo berhasil
-            }
-            break;
-        case 2:
-            // Kembali ke menu utama
-            return;
-    }
-    ready();
+void single_player_game() {
+    is_multiplayer = 0;
+    setup_single_player_mode();
+    handle_game_menu();
 }
 
-void play_game_session() {
-    do {
-        play_single_round();
-    } while (play_again());
+void multiplayer_game() {
+    is_multiplayer = 1;
+    if (!setup_multiplayer_mode()) {
+        printf("Gagal memulai mode multiplayer!\n");
+        return;
+    }
+    handle_game_menu();
+}
+
+void handle_game_menu() {
+    int game_choice;
+    while (1) {
+        print_game_menu();
+        game_choice = get_menu_choice(3);
+        
+        switch (game_choice) {
+            case 1: play_single_round(); break;
+            case 2: do { play_single_round(); } while (play_again()); break;
+            case 3: return; // Kembali ke menu utama
+            default: printf("Pilihan tidak valid!\n");
+        }
+    }
 }
 
 void play_single_round() {
     TreeNodePtr last_node = NULL;
+    Player* current_player = NULL;
     int was_correct = 0;
 
     printf("\n-- GAME #%d --\n", game_counter);
-    printf("Pikirkan seekor hewan, dan saya akan mencoba menebaknya!\n");
+
+    if (is_multiplayer) {
+        current_player = peek_current_player(player_queue);
+        start_player_turn(current_player);
+    } else {
+        printf("Pikirkan seekor hewan, saya akan menebaknya!\n");
+    }
     
     choice(root, &last_node);
 
@@ -111,8 +114,29 @@ void play_single_round() {
         
         // Tambahkan hasil permainan ke riwayat
         add_game_history(game_counter, last_node->text, was_correct);
+        if (is_multiplayer) {
+            end_player_turn(current_player, was_correct);
+            rotate_to_next_player();
+        }
         game_counter++;
     } else {
-        printf("Error: Terjadi kesalahan dalam permainan!\n");
+        printf("Error: Terjadi kesalahan!\n");
     }
+    ready();
+}
+
+void handle_admin_menu() {
+    int admin_choice;
+    print_admin_menu();
+    admin_choice = get_menu_choice(2);
+
+    switch (admin_choice) {
+        case 1:
+            if (undo_last_operation(root)) {
+                auto_save_tree(root);
+            }
+            break;
+        case 2: return;
+    }
+    ready();
 }
