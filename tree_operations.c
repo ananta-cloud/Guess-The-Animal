@@ -8,32 +8,30 @@
 TreeNodePtr create_default_tree() {
     // Alokasi memori untuk setiap node
     TreeNodePtr root = (TreeNodePtr)malloc(sizeof(TreeNode));
-    TreeNodePtr yes_node = (TreeNodePtr)malloc(sizeof(TreeNode));
-    TreeNodePtr no_node = (TreeNodePtr)malloc(sizeof(TreeNode));
+    TreeNodePtr vertebrata_node = (TreeNodePtr)malloc(sizeof(TreeNode));
+    TreeNodePtr invertebrata_node = (TreeNodePtr)malloc(sizeof(TreeNode));
+    TreeNodePtr kucing_node = (TreeNodePtr)malloc(sizeof(TreeNode));
+    TreeNodePtr ular_node = (TreeNodePtr)malloc(sizeof(TreeNode));
 
-    // Cek jika alokasi berhasil
-    if (root == NULL || yes_node == NULL || no_node == NULL) {
-        // Bebaskan memori yang sudah teralokasi jika terjadi kegagalan
-        free(root);
-        free(yes_node);
-        free(no_node);
-        return NULL;
-    }
+    strcpy(root->text, "Apakah hewan ini memiliki tulang belakang?");
+    root->yes_ans = vertebrata_node;
+    root->no_ans = invertebrata_node;
 
-    // Mengatur pertanyaan root
-    strcpy(root->text, "Apakah hewan ini hidup di darat?");
-    root->yes_ans = yes_node;
-    root->no_ans = no_node;
+    strcpy(vertebrata_node->text, "Apakah hewan ini menyusui?");
+    vertebrata_node->yes_ans = kucing_node;
+    vertebrata_node->no_ans = ular_node;
 
-    // Mengatur jawaban untuk 'yes'
-    strcpy(yes_node->text, "Kucing");
-    yes_node->yes_ans = NULL;
-    yes_node->no_ans = NULL;
+    strcpy(invertebrata_node->text, "Cacing");
+    invertebrata_node->yes_ans = NULL;
+    invertebrata_node->no_ans = NULL;
 
-    // Mengatur jawaban untuk 'no'
-    strcpy(no_node->text, "Ikan");
-    no_node->yes_ans = NULL;
-    no_node->no_ans = NULL;
+    strcpy(kucing_node->text, "Kucing");
+    kucing_node->yes_ans = NULL;
+    kucing_node->no_ans = NULL;
+
+    strcpy(ular_node->text, "Ular");
+    ular_node->yes_ans = NULL;
+    ular_node->no_ans = NULL;
 
     return root;
 }
@@ -109,7 +107,7 @@ int ask_if_animal(TreeNodePtr start) {
 void build_question(TreeNodePtr start) {
     char new_animal[MAX_TEXT_LENGTH];
     char new_question[MAX_TEXT_LENGTH];
-    char temp_input[MAX_TEXT_LENGTH + 10]; // Buffer sementara
+    char temp_input[MAX_TEXT_LENGTH + 10];
 
     // Hewan lama (tebakan yang salah) akan menjadi jawaban 'no'
     char old_animal[MAX_TEXT_LENGTH];
@@ -144,4 +142,104 @@ void build_question(TreeNodePtr start) {
     start->no_ans = no_node;
     
     printf("Terima kasih! Saya telah belajar sesuatu yang baru!\n");
+}
+
+/**
+ * @brief Menulis struktur tree ke file (serialisasi) menggunakan pre-order traversal.
+ * @param start Node awal.
+ * @param out_file Pointer ke file yang dibuka untuk ditulis.
+ */
+void write_to_file(TreeNodePtr start, FILE* out_file) {
+    if (start == NULL) {
+        fprintf(out_file, "*\n"); // '*' menandakan node NULL
+    } else {
+        fprintf(out_file, "%s\n", start->text);
+        write_to_file(start->yes_ans, out_file);
+        write_to_file(start->no_ans, out_file);
+    }
+}
+
+/**
+ * @brief Membaca file dan membangun kembali struktur tree (deserialisasi).
+ * @param start Pointer ke pointer node yang akan dibuat.
+ * @param in_file Pointer ke file yang dibuka untuk dibaca.
+ * @return 0 jika berhasil, 1 jika gagal.
+ */
+int read_from_file(TreeNodePtr* start, FILE* in_file) {
+    char input[MAX_TEXT_LENGTH + 10];
+    
+    if (fgets(input, sizeof(input), in_file) == NULL) {
+        *start = NULL;
+        return 1; // Gagal membaca file
+    }
+    
+    trim_string(input);
+    
+    if (strcmp(input, "*") != 0) {
+        *start = (TreeNodePtr)malloc(sizeof(TreeNode));
+        if (*start == NULL) return 1; // Gagal alokasi memori
+        
+        strcpy((*start)->text, input);
+      
+        if (read_from_file(&((*start)->yes_ans), in_file) != 0 ||
+            read_from_file(&((*start)->no_ans), in_file) != 0) {
+            free(*start);
+            *start = NULL;
+            return 1; // Gagal membaca sub-tree
+        }
+    } else {
+        *start = NULL; // Node ini adalah NULL
+    }
+    
+    return 0; // Sukses
+}
+
+/**
+ * @brief Fungsi pembungkus untuk menyimpan tree ke file default.
+ * @param start Pointer ke root tree.
+ * @return 0 jika berhasil, 1 jika gagal.
+ */
+int auto_save_tree(TreeNodePtr start) {
+    FILE* out_file = fopen(DEFAULT_DB_FILE, "w");
+    if (out_file == NULL) {
+        return 1; // Gagal membuka file
+    }
+    
+    write_to_file(start, out_file);
+    fclose(out_file);
+    
+    return 0;
+}
+
+/**
+ * @brief Memuat tree dari file jika ada, atau membuat tree default jika tidak ada.
+ * @param head Pointer ke pointer root tree.
+ * @return 0 jika berhasil, 1 jika gagal.
+ */
+int load_or_create_database(TreeNodePtr* head) {
+    FILE* in_file = fopen(DEFAULT_DB_FILE, "r");
+    
+    if (in_file != NULL) { // Jika file database ada
+        printf("Memuat database yang sudah ada...\n");
+        if (read_from_file(head, in_file) == 0) {
+            printf("Database berhasil dimuat!\n");
+            fclose(in_file);
+            return 0; // Sukses memuat
+        } else {
+            printf("Database rusak, membuat database baru...\n");
+            fclose(in_file);
+        }
+    } else { // Jika file tidak ditemukan
+        printf("Database tidak ditemukan, membuat database baru...\n");
+    }
+    
+    // Buat database default jika gagal memuat atau file tidak ada
+    *head = create_default_tree();
+    if (*head == NULL) return 1; // Gagal membuat tree
+    
+    if (auto_save_tree(*head) == 0) {
+        printf("Database baru berhasil dibuat dan disimpan!\n");
+    }
+    
+    return 0;
 }
