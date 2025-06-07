@@ -8,7 +8,9 @@
 #include <time.h>
 
 #define MAX_TEXT_LENGTH 256
+#define MAX_NAME_LENGTH 128
 #define DEFAULT_DB_FILE "animal_database.txt" // File untuk menyimpan data hewan
+#define BACKUP_DB_FILE "animal_database_backup.txt" // File untuk backup data di database hewan
 #define HISTORY_FILE "game_history.txt" // File untuk menyimpan riwayat permainan
 
 // Tree Node untuk Menebak Hewan
@@ -39,6 +41,23 @@ typedef struct UndoStack {
     struct UndoStack* next;
 } UndoStack;
 extern UndoStack* undo_stack_top;
+
+// Node Untuk Player
+typedef struct Player {
+    char name[MAX_NAME_LENGTH];
+    int score;
+    int games_played;
+    int correct_guesses;
+    struct Player* next;
+} Player;
+
+// Node untuk Antrian Player
+typedef struct PlayerQueue {
+    Player* front;
+    Player* rear;
+    int count;
+} PlayerQueue;
+extern PlayerQueue* player_queue;
 
 // Prototipe untuk fungsi utilitas dasar yang diperlukan untuk memproses input pengguna.
 void trim_string(char* str);
