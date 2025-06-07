@@ -53,6 +53,12 @@ void play_single_round(TreeNodePtr root) {
         } else {
             // Jika salah, panggil fungsi untuk belajar
             build_question(last_node);
+
+            if (auto_save_tree(root) == 0) {
+                printf("Pembelajaran baru berhasil disimpan!\n");
+            } else {
+                printf("Peringatan: Gagal menyimpan pembelajaran baru!\n");
+            }
         }
     } else {
         printf("Error: Terjadi kesalahan dalam permainan!\n");
