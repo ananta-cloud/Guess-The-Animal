@@ -5,26 +5,34 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 
 #define MAX_TEXT_LENGTH 256
-#define DEFAULT_DB_FILE "animal_database.txt" //File untuk menyimpan data hewan
+#define DEFAULT_DB_FILE "animal_database.txt" // File untuk menyimpan data hewan
+#define HISTORY_FILE "game_history.txt" // File untuk menyimpan riwayat permainan
 
-// Tree Node for Animal Guessing
-// Ini adalah satu-satunya struktur data yang kita butuhkan untuk memulai.
-// 'text' akan berisi pertanyaan atau nama hewan.
-// 'yes_ans' dan 'no_ans' adalah pointer ke node berikutnya.
-// Jika 'yes_ans' dan 'no_ans' keduanya NULL, maka node ini adalah jawaban (hewan).
+// Tree Node untuk Menebak Hewan
 typedef struct TreeNode {
     char text[MAX_TEXT_LENGTH];
     struct TreeNode *yes_ans;
     struct TreeNode *no_ans;
 } TreeNode;
-
 typedef TreeNode* TreeNodePtr;
+
+// Node game history untuk linked list
+typedef struct GameHistory{
+    int game_number;
+    char guessed_animal[MAX_TEXT_LENGTH];
+    int was_correct;
+    time_t timestamp;
+    struct GameHistory* next;
+} GameHistory;
+extern GameHistory* game_history_head;
 
 // Prototipe untuk fungsi utilitas dasar yang diperlukan untuk memproses input pengguna.
 void trim_string(char* str);
 void to_lowercase(char* str);
 int get_answer();
+void print_header(const char* title);
 
 #endif // COMMON_TYPES_H

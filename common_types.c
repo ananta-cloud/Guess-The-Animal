@@ -1,4 +1,8 @@
 #include "common_types.h"
+#include "utils.h"
+
+// Inisialisasi vaiabel global
+GameHistory* game_history_head = NULL;
 
 // Utuk menghapus spasi pada string
 void trim_string(char* str) {
