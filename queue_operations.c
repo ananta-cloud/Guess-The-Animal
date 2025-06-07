@@ -67,9 +67,7 @@ void clear_player_queue(PlayerQueue* queue) {
     }
 }
 
-/**
- * @brief Memindahkan pemain saat ini ke belakang antrean.
- */
+// Memindahkan Player ke antrian belakang
 void rotate_to_next_player() {
     if (player_queue == NULL || player_queue->count <= 1) return;
     
@@ -84,11 +82,7 @@ void rotate_to_next_player() {
     }
 }
 
-/**
- * @brief Memperbarui statistik pemain setelah satu ronde.
- * @param player Pemain yang statistiknya akan diperbarui.
- * @param was_correct Apakah tebakan benar.
- */
+// Update statistika player
 void update_player_stats(Player* player, int was_correct) {
     if (player == NULL) return;
     
@@ -131,10 +125,7 @@ int setup_multiplayer_mode() {
     return 1;
 }
 
-/**
- * @brief Mengatur permainan untuk mode single player.
- * @return 1 jika berhasil.
- */
+// Setting untuk single Player
 int setup_single_player_mode() {
     if (player_queue != NULL) clear_player_queue(player_queue);
     else player_queue = create_player_queue();
@@ -155,4 +146,64 @@ void end_player_turn(Player* current_player, int was_correct) {
     
     update_player_stats(current_player, was_correct);
     printf("\nGiliran %s selesai. Skor: %d\n", current_player->name, current_player->score);
+}
+
+// Menampilkan daftar semua pemain beserta statistik mereka
+void display_all_players() {
+    if (player_queue == NULL || is_queue_empty(player_queue)) {
+        printf("Tidak ada pemain yang terdaftar.\n");
+        return;
+    }
+    
+    print_header("DAFTAR SEMUA PEMAIN");
+    printf("%-20s %-8s %-8s\n", "Nama", "Skor", "Main");
+    printf("----------------------------------------\n");
+    
+    Player* current = player_queue->front;
+    while (current != NULL) {
+        printf("%-20s %-8d %-8d\n", 
+               current->name, current->score, current->games_played);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+// Menampilkan peringkat pemain berdasarkan skor tertinggi
+void display_player_rankings() {
+    if (player_queue == NULL || is_queue_empty(player_queue)) {
+        printf("Tidak ada pemain untuk diperingkatkan.\n");
+        return;
+    }
+    
+    int count = player_queue->count;
+    Player** players = (Player**)malloc(count * sizeof(Player*));
+    if (players == NULL) { printf("Gagal alokasi memori untuk ranking!\n"); return; }
+    
+    // Salin pointer pemain dari queue ke array
+    Player* current = player_queue->front;
+    for (int i = 0; i < count; i++) {
+        players[i] = current;
+        current = current->next;
+    }
+    
+    // Urutkan array menggunakan Bubble Sort (cukup untuk jumlah pemain kecil)
+    for (int i = 0; i < count - 1; i++) {
+        for (int j = 0; j < count - i - 1; j++) {
+            if (players[j]->score < players[j+1]->score) {
+                Player* temp = players[j];
+                players[j] = players[j+1];
+                players[j+1] = temp;
+            }
+        }
+    }
+    
+    print_header("RANKING PEMAIN");
+    printf("%-5s %-20s %-8s\n", "Rank", "Nama", "Skor");
+    printf("------------------------------------\n");
+    for (int i = 0; i < count; i++) {
+        printf("%-5d %-20s %-8d\n", i + 1, players[i]->name, players[i]->score);
+    }
+    
+    free(players);
+    printf("\n");
 }

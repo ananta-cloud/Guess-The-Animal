@@ -14,6 +14,8 @@ void clear_player_queue(PlayerQueue* queue);
 // Fungsi manajemen pemain
 void rotate_to_next_player();
 void update_player_stats(Player* player, int was_correct);
+void display_all_players();
+void display_player_rankings();
 
 // Fungsi untuk setup mode permainan
 int setup_multiplayer_mode();
