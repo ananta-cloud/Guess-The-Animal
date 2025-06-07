@@ -12,13 +12,11 @@ void trim_string(char* str) {
         str[len-1] = '\0';
         len--;
     }
-    
     // Hapus spasi di awal
     int start = 0;
     while (str[start] && isspace(str[start])) {
         start++;
     }
-    
     if (start > 0) {
         memmove(str, str + start, strlen(str + start) + 1);
     }
@@ -33,7 +31,6 @@ void to_lowercase(char* str) {
         str[i] = tolower(str[i]);
     }
 }
-
 /**
  * @brief Membaca input dari pengguna dan mengonversinya menjadi jawaban 'yes' (1) atau 'no' (0).
  * @return 1 untuk 'yes', 0 untuk 'no', -1 untuk input tidak valid.
@@ -44,7 +41,6 @@ int get_answer() {
     if (fgets(answer, sizeof(answer), stdin) != NULL) {
         trim_string(answer);
         to_lowercase(answer);
-        
         if (strcmp(answer, "yes") == 0 || strcmp(answer, "y") == 0 || strcmp(answer, "ya") == 0) {
             return 1; // Jawaban 'yes'
         } else if (strcmp(answer, "no") == 0 || strcmp(answer, "n") == 0 || strcmp(answer, "tidak") == 0) {
