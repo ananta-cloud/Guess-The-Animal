@@ -29,6 +29,17 @@ typedef struct GameHistory{
 } GameHistory;
 extern GameHistory* game_history_head;
 
+// Node Undo untuk stack
+typedef struct UndoStack {
+    TreeNodePtr modified_node;
+    char original_text[MAX_TEXT_LENGTH];
+    TreeNodePtr original_yes;
+    TreeNodePtr original_no;
+    char operation_type[20]; // "LEARN"
+    struct UndoStack* next;
+} UndoStack;
+extern UndoStack* undo_stack_top;
+
 // Prototipe untuk fungsi utilitas dasar yang diperlukan untuk memproses input pengguna.
 void trim_string(char* str);
 void to_lowercase(char* str);
