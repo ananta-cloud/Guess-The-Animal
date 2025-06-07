@@ -1,10 +1,6 @@
 #include "tree_operations.h"
 
-/**
- * @brief Membuat pohon keputusan default yang sangat sederhana.
- * Hanya berisi satu pertanyaan dan dua hewan untuk memulai.
- * @return Pointer ke root dari pohon yang baru dibuat.
- */
+// Untuk Membuat Tree pertnayaan sederhana
 TreeNodePtr create_default_tree() {
     // Alokasi memori untuk setiap node
     TreeNodePtr root = (TreeNodePtr)malloc(sizeof(TreeNode));
@@ -36,10 +32,7 @@ TreeNodePtr create_default_tree() {
     return root;
 }
 
-/**
- * @brief Membebaskan semua memori yang digunakan oleh pohon secara rekursif.
- * @param start Node awal untuk memulai pembebasan memori.
- */
+// Dealokalisasi tree
 void free_tree(TreeNodePtr start) {
     if (start != NULL) {
         free_tree(start->yes_ans);
@@ -48,11 +41,7 @@ void free_tree(TreeNodePtr start) {
     }
 }
 
-/**
- * @brief Menavigasi pohon berdasarkan jawaban pengguna (fungsi rekursif).
- * @param start Node saat ini.
- * @param last_accessed Pointer untuk menyimpan node jawaban terakhir yang dicapai.
- */
+// Navigasi pergerakan Tree tergantung jawaban 'Yes' or 'No' pengguna
 void choice(TreeNodePtr start, TreeNodePtr* last_accessed) {
     *last_accessed = start; // Simpan node saat ini sebagai yang terakhir diakses
 
@@ -78,11 +67,7 @@ void choice(TreeNodePtr start, TreeNodePtr* last_accessed) {
     }
 }
 
-/**
- * @brief Mengajukan pertanyaan konfirmasi akhir kepada pengguna.
- * @param start Node yang berisi tebakan hewan.
- * @return 1 jika pengguna mengonfirmasi, 0 jika tidak.
- */
+// Mengajukan pertanyaan konfirmasi akhir kepada pengguna.
 int ask_if_animal(TreeNodePtr start) {
     int user_decision;
     while (1) {
@@ -99,11 +84,7 @@ int ask_if_animal(TreeNodePtr start) {
     }
 }
 
-/**
- * @brief Memperluas pohon dengan menambahkan pertanyaan dan jawaban baru.
- * Ini adalah fungsi "belajar".
- * @param start Node tempat tebakan salah terjadi.
- */
+// Build up Noode Tree Berdasarkan data pertanyaan dan hewan baru yang diinputkan oleh user
 void build_question(TreeNodePtr start) {
     char new_animal[MAX_TEXT_LENGTH];
     char new_question[MAX_TEXT_LENGTH];
@@ -144,11 +125,7 @@ void build_question(TreeNodePtr start) {
     printf("Terima kasih! Saya telah belajar sesuatu yang baru!\n");
 }
 
-/**
- * @brief Menulis struktur tree ke file (serialisasi) menggunakan pre-order traversal.
- * @param start Node awal.
- * @param out_file Pointer ke file yang dibuka untuk ditulis.
- */
+// Menulis struktur tree ke file (serialisasi) menggunakan pre-order traversal
 void write_to_file(TreeNodePtr start, FILE* out_file) {
     if (start == NULL) {
         fprintf(out_file, "*\n"); // '*' menandakan node NULL
@@ -159,12 +136,7 @@ void write_to_file(TreeNodePtr start, FILE* out_file) {
     }
 }
 
-/**
- * @brief Membaca file dan membangun kembali struktur tree (deserialisasi).
- * @param start Pointer ke pointer node yang akan dibuat.
- * @param in_file Pointer ke file yang dibuka untuk dibaca.
- * @return 0 jika berhasil, 1 jika gagal.
- */
+// Membaca file dan membangun kembali struktur tree (deserialisasi)
 int read_from_file(TreeNodePtr* start, FILE* in_file) {
     char input[MAX_TEXT_LENGTH + 10];
     
@@ -194,11 +166,7 @@ int read_from_file(TreeNodePtr* start, FILE* in_file) {
     return 0; // Sukses
 }
 
-/**
- * @brief Fungsi pembungkus untuk menyimpan tree ke file default.
- * @param start Pointer ke root tree.
- * @return 0 jika berhasil, 1 jika gagal.
- */
+// Fungsi pembungkus untuk menyimpan tree ke file default
 int auto_save_tree(TreeNodePtr start) {
     FILE* out_file = fopen(DEFAULT_DB_FILE, "w");
     if (out_file == NULL) {
