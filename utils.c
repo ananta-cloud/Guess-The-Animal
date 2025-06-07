@@ -89,3 +89,19 @@ void initialize_system() {
     printf("Sistem berhasil diinisialisasi!\n\n");
 }
 
+/**
+ * @brief Membersihkan semua memori dan menyimpan data sebelum keluar.
+ */
+void cleanup_system() {
+    printf("Membersihkan sistem...\n");
+    save_history_to_file();
+    clear_game_history();
+    if (player_queue != NULL) {
+        clear_player_queue(player_queue);
+        free(player_queue);
+        player_queue = NULL;
+    }
+    clear_undo_stack();
+    printf("Sistem berhasil dibersihkan!\n");
+}
+
