@@ -1,6 +1,7 @@
 #include "common_types.h"
 #include "tree_operations.h"
 #include "linked_list.h"
+#include "stack_operations.h"
 #include "utils.h"
 
 // Variabel global untuk state permainan
@@ -10,6 +11,7 @@ int game_counter = 1;
 // Prototipe fungsi lokal
 void play_game_session();
 void play_single_round();
+void handle_admin_menu();
 
 int main() {
     int main_choice;
@@ -43,29 +45,51 @@ int main() {
                 ready();
                 break;
             case 3:
+                handle_admin_menu(); // Panggil handler menu admin
+                break;
+            case 4:
                 print_goodbye();
-                save_history_to_file(); // Simpan riwayat sebelum keluar
+                save_history_to_file();
+                auto_save_tree(root); // Pastikan tree juga tersimpan
                 free_tree(root);
                 clear_game_history();
+                clear_undo_stack(); // Bersihkan stack saat keluar
                 return 0;
             default:
                 printf("Pilihan tidak valid!\n");
         }
     }
 }
+
 /**
- * @brief Mengelola sesi permainan dimana user bisa bermain berulang kali.
+ * @brief Menangani logika untuk menu admin.
  */
+void handle_admin_menu() {
+    int admin_choice;
+    print_admin_menu();
+    admin_choice = get_menu_choice(2);
+
+    switch (admin_choice) {
+        case 1:
+            // Lakukan operasi undo
+            if (undo_last_operation(root)) {
+                printf("Perubahan berhasil disimpan kembali ke file.\n");
+                auto_save_tree(root); // Simpan tree setelah undo berhasil
+            }
+            break;
+        case 2:
+            // Kembali ke menu utama
+            return;
+    }
+    ready();
+}
+
 void play_game_session() {
     do {
         play_single_round();
     } while (play_again());
 }
 
-/**
- * @brief Menjalankan satu putaran penuh permainan, mulai dari bertanya hingga belajar.
- * @param root Pointer ke root dari pohon keputusan.
- */
 void play_single_round() {
     TreeNodePtr last_node = NULL;
     int was_correct = 0;
