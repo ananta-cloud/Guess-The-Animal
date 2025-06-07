@@ -133,3 +133,25 @@ int get_correct_guesses() {
     }
     return count;
 }
+
+double get_success_rate() {
+    int total = get_total_games();
+    if (total == 0) return 0.0;
+    
+    int correct = get_correct_guesses();
+    return ((double)correct / total) * 100.0;
+}
+
+void display_game_statistics() {
+    print_header("STATISTIK PERMAINAN");
+    
+    int total_games = get_total_games();
+    int correct_guesses = get_correct_guesses();
+    double success_rate = get_success_rate();
+    
+    printf("Total Permainan      : %d\n", total_games);
+    printf("Tebakan Benar        : %d\n", correct_guesses);
+    printf("Tebakan Salah        : %d\n", total_games - correct_guesses);
+    printf("Tingkat Keberhasilan : %.1f%%\n", success_rate);
+    printf("\n");
+}

@@ -12,8 +12,10 @@ void clear_game_history();
 void save_history_to_file();
 void load_history_from_file();
 
-//modul untuk statistik permainan
+// Modul untuk statistik permainan
 int get_total_games();
 int get_correct_guesses();
+double get_success_rate();
+void display_game_statistics();
 
 #endif // LINKED_LIST_H
