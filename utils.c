@@ -1,16 +1,9 @@
 #include "utils.h"
 
-/**
- * @brief Mencetak garis pemisah untuk merapikan output.
- */
 void print_separator() {
     printf("==================================================\n");
 }
 
-/**
- * @brief Mencetak header yang terformat untuk judul menu.
- * @param title Teks yang akan ditampilkan sebagai header.
- */
 void print_header(const char* title) {
     print_separator();
     printf("          %s\n", title);
@@ -18,15 +11,27 @@ void print_header(const char* title) {
 }
 
 /**
- * @brief Menampilkan menu utama kepada pengguna.
+ * @brief Menampilkan menu utama kepada pengguna, kini dengan opsi Admin.
  */
 void print_main_menu() {
     print_header("ANIMAL GUESSING GAME - MENU UTAMA");
     printf("1. Mulai Permainan\n");
     printf("2. Lihat Riwayat Permainan\n");
-    printf("3. Keluar\n");
+    printf("3. Menu Admin\n");
+    printf("4. Keluar\n");
     print_separator();
-    printf("Pilih menu (1-3): ");
+    printf("Pilih menu (1-4): ");
+}
+
+/**
+ * @brief Menampilkan menu admin.
+ */
+void print_admin_menu() {
+    print_header("MENU ADMIN");
+    printf("1. Undo Operasi Terakhir\n");
+    printf("2. Kembali ke Menu Utama\n");
+    print_separator();
+    printf("Pilih opsi (1-2): ");
 }
 
 /**
