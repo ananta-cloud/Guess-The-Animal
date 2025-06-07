@@ -2,6 +2,7 @@
 #include "tree_operations.h"
 #include "linked_list.h"
 #include "stack_operations.h"
+#include "queue_operations.h"
 #include "utils.h"
 
 // Variabel global untuk state permainan
@@ -75,13 +76,50 @@ void handle_game_menu() {
     int game_choice;
     while (1) {
         print_game_menu();
-        game_choice = get_menu_choice(3);
+        game_choice = get_menu_choice(4);
         
         switch (game_choice) {
             case 1: play_single_round(); break;
             case 2: do { play_single_round(); } while (play_again()); break;
-            case 3: return; // Kembali ke menu utama
+            case 3: // Tampilkan semua hewan
+                print_header("DAFTAR SEMUA HEWAN DI DATABASE");
+                display_all_animals(root);
+                printf("\nTotal hewan diketahui: %d\n", count_total_animals(root));
+                ready();
+                break;
+            case 4: return;
             default: printf("Pilihan tidak valid!\n");
+        }
+    }
+}
+
+/**
+ * @brief Menangani navigasi dan logika untuk menu statistik.
+ */
+void handle_statistics_menu() {
+    int stats_choice;
+    while (1) {
+        print_statistics_menu();
+        stats_choice = get_menu_choice(4);
+
+        switch(stats_choice) {
+            case 1:
+                display_game_statistics();
+                printf("STATISTIK DATABASE:\n");
+                printf("   Total hewan diketahui: %d\n", count_total_animals(root));
+                printf("   Kedalaman pengetahuan: %d level\n", calculate_tree_depth(root));
+                ready();
+                break;
+            case 2:
+                display_game_history();
+                ready();
+                break;
+            case 3:
+                display_player_rankings();
+                ready();
+                break;
+            case 4:
+                return; // Kembali
         }
     }
 }
