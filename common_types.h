@@ -7,6 +7,7 @@
 #include <ctype.h>
 
 #define MAX_TEXT_LENGTH 256
+#define DEFAULT_DB_FILE "animal_database.txt" //File untuk menyimpan data hewan
 
 // Tree Node for Animal Guessing
 // Ini adalah satu-satunya struktur data yang kita butuhkan untuk memulai.

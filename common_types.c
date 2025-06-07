@@ -1,9 +1,6 @@
 #include "common_types.h"
 
-/**
- * @brief Menghapus spasi di awal/akhir dan karakter baris baru dari sebuah string.
- * @param str String yang akan di-trim.
- */
+// Utuk menghapus spasi pada string
 void trim_string(char* str) {
     int len = strlen(str);
     
@@ -22,19 +19,13 @@ void trim_string(char* str) {
     }
 }
 
-/**
- * @brief Mengubah sebuah string menjadi huruf kecil.
- * @param str String yang akan diubah.
- */
+// Untuk mengubah string menjadi lowercase
 void to_lowercase(char* str) {
     for (int i = 0; str[i]; i++) {
         str[i] = tolower(str[i]);
     }
 }
-/**
- * @brief Membaca input dari pengguna dan mengonversinya menjadi jawaban 'yes' (1) atau 'no' (0).
- * @return 1 untuk 'yes', 0 untuk 'no', -1 untuk input tidak valid.
- */
+// Untuk Membaca input dari pengguna
 int get_answer() {
     char answer[20];
     
