@@ -124,3 +124,22 @@ void display_undo_history() {
     }
     printf("\n");
 }
+
+void push_tree_node(TreeStack** stack, TreeNodePtr node) {
+    TreeStack* new_stack_node = (TreeStack*)malloc(sizeof(TreeStack));
+    if (new_stack_node == NULL) { return; }
+    
+    new_stack_node->node = node;
+    new_stack_node->next = *stack;
+    *stack = new_stack_node;
+}
+
+TreeNodePtr pop_tree_node(TreeStack** stack) {
+    if (*stack == NULL) return NULL;
+    
+    TreeStack* top = *stack;
+    TreeNodePtr node = top->node;
+    *stack = top->next;
+    free(top);
+    return node;
+}
