@@ -29,6 +29,9 @@ void end_player_turn(Player* current_player, int was_correct);
 
 // Fungsi statistik dan utilitas pemain
 Player* find_best_player();
+Player* find_player_by_name(const char* name);
+void save_player_stats();
+void load_player_stats();
 int get_total_players();
 
 #endif // QUEUE_OPERATIONS_H
