@@ -89,3 +89,18 @@ void clear_undo_stack() {
 int is_undo_stack_empty() {
     return undo_stack_top == NULL;
 }
+
+void save_current_state_before_learning(TreeNodePtr node) {
+    if (node == NULL) return;
+    push_undo_state(node, node->text, node->yes_ans, node->no_ans, "LEARN");
+}
+
+int get_undo_stack_size() {
+    int count = 0;
+    UndoStack* current = undo_stack_top;
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+    return count;
+}
