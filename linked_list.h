@@ -22,6 +22,7 @@ void display_game_statistics();
 void add_question_suggestion(const char* question, int was_successful);
 char* get_best_question_suggestion();
 void display_question_suggestions();
+void update_question_success_rate(const char* question, int was_successful);
 void clear_suggestions();
 
 #endif // LINKED_LIST_H

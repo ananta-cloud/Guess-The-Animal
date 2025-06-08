@@ -156,15 +156,25 @@ void display_game_statistics() {
     printf("\n");
 }
 
-void add_question_suggestion(const char* question, int was_successful) {
-    // Cek apakah pertanyaan sudah ada, jika ya, update statistiknya
+void update_question_success_rate(const char* question, int was_successful) {
     QuestionSuggestion* current = suggestion_list;
     while (current != NULL) {
         if (strcmp(current->question, question) == 0) {
             current->usage_count++;
-            // Update success rate menggunakan simple moving average
             double weight = 0.8;
             current->success_rate = (current->success_rate * weight) + ((was_successful ? 100.0 : 0.0) * (1.0 - weight));
+            return;
+        }
+        current = current->next;
+    }
+}
+
+void add_question_suggestion(const char* question, int was_successful) {
+    // Cek apakah sudah ada, jika ya, panggil update terpisah
+    QuestionSuggestion* current = suggestion_list;
+    while (current != NULL) {
+        if (strcmp(current->question, question) == 0) {
+            update_question_success_rate(question, was_successful);
             return;
         }
         current = current->next;
