@@ -139,48 +139,71 @@ void play_single_round() {
     TreeNodePtr last_node = NULL;
     Player* current_player = NULL;
     int was_correct = 0;
-
-    printf("\n-- GAME #%d --\n", game_counter);
-
+    
+    printf("\n");
+    print_separator();
+    printf("GAME #%d\n", game_counter);
+    print_separator();
+    
+    // Handle multiplayer turn
     if (is_multiplayer) {
         current_player = peek_current_player(player_queue);
+        if (current_player == NULL) {
+            printf("Tidak ada player aktif!\n");
+            return;
+        }
         start_player_turn(current_player);
     } else {
-        printf("Pikirkan seekor hewan, saya akan menebaknya!\n");
+        printf("Pikirkan seekor hewan, dan saya akan mencoba menebaknya!\n");
+        ready();
     }
     
+    // Start the guessing process
     choice(root, &last_node);
-
+    
     if (last_node != NULL) {
         was_correct = ask_if_animal(last_node);
         
         if (was_correct) {
             printf("\nYeay! Saya berhasil menebak hewan Anda!\n");
+            printf("Saya memang pintar, kan?\n");
         } else {
+            printf("\nHmm, saya belum bisa menebak dengan benar.\n");
+            printf("Mari bantu saya belajar!\n\n");
             build_question(last_node);
-            auto_save_tree(root); // Simpan tree setelah belajar
+            
+            // Auto-save after learning
+            if (auto_save_tree(root) == 0) {
+                printf("Pembelajaran berhasil disimpan!\n");
+            }
         }
         
-        // Tambahkan hasil permainan ke riwayat
+        // Add to game history
         add_game_history(game_counter, last_node->text, was_correct);
-        if (is_multiplayer) {
+        
+        // Update player stats if multiplayer
+        if (is_multiplayer && current_player != NULL) {
             end_player_turn(current_player, was_correct);
-            rotate_to_next_player();
+            rotate_to_next_player(); // Move to next player
         }
+        
         game_counter++;
     } else {
-        printf("Error: Terjadi kesalahan!\n");
+        printf("Error: Tidak dapat memproses permainan!\n");
     }
+    
+    printf("\n");
     ready();
 }
 
 void handle_admin_menu() {
     int admin_choice;
-    print_admin_menu();
-    admin_choice = get_menu_choice(7);
-
-    switch (admin_choice) {
-        case 1:
+    while (1) {
+        print_admin_menu();
+        admin_choice = get_menu_choice(7);
+        
+        switch (admin_choice) {
+            case 1:
                 iterative_preorder_traversal(root);
                 ready();
                 break;
@@ -215,8 +238,12 @@ void handle_admin_menu() {
                 }
                 ready();
                 break;
-            case 7:
-                return; // Kembali ke menu utama
+                case 7:
+                display_system_status();
+                ready();
+                break;
+            case 8:
+                return;
+        }
     }
-    ready();
 }
