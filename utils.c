@@ -19,19 +19,33 @@ void print_main_menu() {
     printf("2. Mulai Permainan Multiplayer\n");
     printf("3. Lihat Riwayat Permainan\n");
     printf("4. Menu Admin\n");
-    printf("5. Keluar\n");
+    printf("5. Bantuan\n");
+    printf("6. Keluar\n");
     print_separator();
-    printf("Pilih menu (1-5): ");
+    printf("Pilih menu (1-6): ");
 }
 
 void print_statistics_menu() {
     print_header("MENU STATISTIK");
-    printf("1. Statistik Umum Permainan\n");
-    printf("2. Riwayat Permainan Lengkap\n");
-    printf("3. Peringkat Pemain (Multiplayer)\n");
-    printf("4. Kembali ke Menu Utama\n");
+    printf("1. Statistik Umum\n");
+    printf("2. Riwayat Permainan\n");
+    printf("3. Ranking Pemain\n");
+    printf("4. Saran Pertanyaan\n");
+    printf("5. Analisis Pembelajaran\n");
+    printf("6. Kembali\n");
     print_separator();
-    printf("Pilih opsi (1-4): ");
+    printf("Pilih opsi (1-6): ");
+}
+
+void display_comprehensive_statistics() {
+    print_header("STATISTIK KOMPREHENSIF");
+    display_game_statistics();
+    if (get_total_players() > 0) {
+        printf("STATISTIK PEMAIN:\n");
+        Player* best = find_best_player();
+        if (best) printf("   Pemain Terbaik: %s (Skor: %d)\n", best->name, best->score);
+    }
+    printf("\n");
 }
 
 void print_game_menu() {
@@ -55,6 +69,40 @@ void print_admin_menu() {
     printf("7. Kembali\n");
     print_separator();
     printf("Pilih opsi (1-7): ");
+}
+
+void display_learning_analytics() {
+    print_header("ANALISIS PEMBELAJARAN");
+    printf("Tingkat Keberhasilan AI: %.1f%%\n", get_success_rate());
+    printf("Total Hewan dalam Database: %d\n", count_total_animals(root));
+    printf("\nREKOMENDASI:\n");
+    if (get_success_rate() < 50 && get_total_games() > 5) {
+        printf("- Akurasi perlu ditingkatkan. Berikan pertanyaan yang lebih jelas saat AI belajar.\n");
+    } else {
+        printf("- Performa AI bagus! Teruslah bermain untuk memperluas pengetahuannya.\n");
+    }
+    printf("- Pertanyaan paling efektif sejauh ini adalah: \"%s\"\n", get_best_question_suggestion());
+}
+
+void show_help_information() {
+    print_header("BANTUAN & INFORMASI");
+    printf("CARA BERMAIN:\n");
+    printf("  1. Pilih mode permainan (Single/Multiplayer).\n");
+    printf("  2. Pikirkan seekor hewan.\n");
+    printf("  3. Jawab pertanyaan dengan 'yes'/'y'/'ya' atau 'no'/'n'/'tidak'.\n");
+    printf("  4. Jika tebakan saya salah, bantu saya belajar dengan memberi hewan\n");
+    printf("     yang benar dan pertanyaan pembeda.\n\n");
+    printf("FITUR:\n");
+    printf("  - Statistik: Lihat performa, riwayat, dan ranking.\n");
+    printf("  - Admin: Lakukan undo, backup, restore, atau reset data.\n\n");
+}
+
+void display_session_summary() {
+    print_header("RINGKASAN SESI");
+    printf("Terima kasih telah bermain!\n");
+    printf("Total permainan keseluruhan: %d\n", get_total_games());
+    printf("Tingkat keberhasilan saat ini: %.1f%%\n", get_success_rate());
+    printf("Data permainan telah disimpan secara otomatis.\n");
 }
 
 int get_menu_choice(int max_choice) {
