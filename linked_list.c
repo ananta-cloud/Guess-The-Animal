@@ -217,3 +217,13 @@ void display_question_suggestions() {
     }
     printf("\n");
 }
+
+void clear_suggestions() {
+    QuestionSuggestion* current = suggestion_list;
+    while (current != NULL) {
+        QuestionSuggestion* temp = current;
+        current = current->next;
+        free(temp);
+    }
+    suggestion_list = NULL;
+}
