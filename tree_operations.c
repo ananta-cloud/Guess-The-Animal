@@ -1,5 +1,7 @@
 #include "tree_operations.h"
 #include "stack_operations.h"
+#include "linked_list.h"
+#include "utils.h"
 
 // Untuk Membuat Tree pertnayaan sederhana
 TreeNodePtr create_default_tree() {
@@ -183,6 +185,8 @@ void build_question(TreeNodePtr start) {
     fgets(temp_input, sizeof(temp_input), stdin);
     trim_string(temp_input);
     strcpy(new_question, temp_input);
+
+    add_question_suggestion(new_question, 1);
 
     TreeNodePtr yes_node = (TreeNodePtr)malloc(sizeof(TreeNode));
     strcpy(yes_node->text, new_animal);
