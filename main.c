@@ -15,6 +15,7 @@ void single_player_game();
 void multiplayer_game();
 void play_single_round();
 void handle_game_menu();
+void handle_statistics_menu();
 void handle_admin_menu();
 
 int main() {
@@ -166,15 +167,46 @@ void play_single_round() {
 void handle_admin_menu() {
     int admin_choice;
     print_admin_menu();
-    admin_choice = get_menu_choice(2);
+    admin_choice = get_menu_choice(7);
 
     switch (admin_choice) {
         case 1:
-            if (undo_last_operation(root)) {
+                iterative_preorder_traversal(root);
+                ready();
+                break;
+            case 2:
+                if (undo_last_operation(root)) {
+                    printf("Menyimpan perubahan...\n");
+                    auto_save_tree(root);
+                }
+                ready();
+                break;
+            case 3:
+                display_undo_history();
+                ready();
+                break;
+            case 4:
+                reset_all_data();
+                // Buat ulang tree default setelah reset
+                free_tree(root);
+                root = create_default_tree();
                 auto_save_tree(root);
-            }
-            break;
-        case 2: return;
+                ready();
+                break;
+            case 5:
+                create_system_backup();
+                ready();
+                break;
+            case 6:
+                if (restore_system_backup()) {
+                    // Muat ulang tree dari file yang dipulihkan
+                    free_tree(root);
+                    load_or_create_database(&root);
+                }
+                ready();
+                break;
+            case 7:
+                return; // Kembali ke menu utama
     }
     ready();
 }
