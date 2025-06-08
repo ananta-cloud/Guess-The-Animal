@@ -15,6 +15,7 @@ void clear_player_queue(PlayerQueue* queue);
 void rotate_to_next_player();
 void update_player_score(Player* player, int points);
 void update_player_stats(Player* player, int was_correct);
+void display_current_player();
 void display_all_players();
 void display_player_rankings();
 

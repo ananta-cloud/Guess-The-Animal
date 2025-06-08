@@ -83,6 +83,12 @@ void rotate_to_next_player() {
     }
 }
 
+// Update score player
+void update_player_score(Player* player, int points) {
+    if (player == NULL) return;
+    player->score += points;
+}
+
 // Update statistika player
 void update_player_stats(Player* player, int was_correct) {
     if (player == NULL) return;
@@ -96,41 +102,40 @@ void update_player_stats(Player* player, int was_correct) {
     }
 }
 
-/**
- * @brief Mengatur permainan untuk mode multiplayer.
- * @return 1 jika berhasil, 0 jika gagal.
- */
+// Setting untuk mode multiplayer
 int setup_multiplayer_mode() {
     char input[100];
     int player_count;
     
     print_header("SETUP MODE MULTIPLAYER");
-    printf("Berapa jumlah Player? (2-4): ");
-    if (fgets(input, sizeof(input), stdin) == NULL) return 0;
-    player_count = atoi(input);
-    if (player_count < 2 || player_count > 4) {
-        printf("Jumlah Player tidak valid!\n");
-        return 0;
-    }
-
+    printf("Berapa jumlah pemain? (2-8): ");
+    player_count = get_valid_integer(2, 8); // Menggunakan validasi input baru
+    
     if (player_queue != NULL) clear_player_queue(player_queue);
-    else player_queue = create_player_queue();
+    player_queue = create_player_queue();
     
     for (int i = 0; i < player_count; i++) {
-        printf("Masukkan nama Player %d: ", i + 1);
-        fgets(input, sizeof(input), stdin);
-        trim_string(input);
-        enqueue_player(player_queue, strlen(input) > 0 ? input : "Player");
+        char prompt[50];
+        sprintf(prompt, "Masukkan nama pemain %d: ", i + 1);
+        get_valid_string(input, MAX_NAME_LENGTH, prompt); // Menggunakan validasi input baru
+        add_player_to_game(input);
     }
+    
     printf("\nSetup multiplayer selesai!\n");
+    display_all_players();
     return 1;
 }
 
 // Setting untuk single Player
 int setup_single_player_mode() {
+    char input[MAX_NAME_LENGTH];
+    print_header("SETUP MODE SINGLE PLAYER");
     if (player_queue != NULL) clear_player_queue(player_queue);
-    else player_queue = create_player_queue();
-    enqueue_player(player_queue, "Player 1"); // Player default
+    
+    get_valid_string(input, MAX_NAME_LENGTH, "Masukkan nama Anda: ");
+    add_player_to_game(input);
+
+    printf("\nSetup single player selesai!\n");
     return 1;
 }
 
@@ -144,26 +149,33 @@ void start_player_turn(Player* current_player) {
 // Menampilkan pesan akhir giliran untuk diupdate di statistik Player
 void end_player_turn(Player* current_player, int was_correct) {
     if (current_player == NULL) return;
-    
     update_player_stats(current_player, was_correct);
-    printf("\nGiliran %s selesai. Skor: %d\n", current_player->name, current_player->score);
+    printf("\nStatistik %s:\n   Skor: %d | Total Main: %d | Benar: %d\n", 
+           current_player->name, current_player->score, current_player->games_played, current_player->correct_guesses);
+}
+
+// Menampilkan player sekarang yang dimainkan
+void display_current_player() {
+    Player* current = peek_current_player(player_queue);
+    if (current == NULL) { printf("Tidak ada pemain aktif.\n"); return; }
+    
+    printf("\n--- GILIRAN: %s ---\n", current->name);
+    printf("Skor: %d | Total Main: %d | Tebakan Benar: %d\n", current->score, current->games_played, current->correct_guesses);
 }
 
 // Menampilkan daftar semua Player beserta statistik mereka
 void display_all_players() {
     if (player_queue == NULL || is_queue_empty(player_queue)) {
-        printf("Tidak ada Player yang terdaftar.\n");
+        printf("Tidak ada pemain yang terdaftar.\n");
         return;
     }
-    
-    print_header("DAFTAR SEMUA Player");
-    printf("%-20s %-8s %-8s\n", "Nama", "Skor", "Main");
-    printf("----------------------------------------\n");
-    
+    print_header("DAFTAR SEMUA PEMAIN");
+    printf("%-20s %-8s %-8s %-8s %-12s\n", "Nama", "Skor", "Main", "Benar", "Sukses (%)");
+    printf("-----------------------------------------------------------------\n");
     Player* current = player_queue->front;
     while (current != NULL) {
-        printf("%-20s %-8d %-8d\n", 
-               current->name, current->score, current->games_played);
+        double success_rate = (current->games_played > 0) ? ((double)current->correct_guesses / current->games_played) * 100.0 : 0.0;
+        printf("%-20s %-8d %-8d %-8d %-12.1f\n", current->name, current->score, current->games_played, current->correct_guesses, success_rate);
         current = current->next;
     }
     printf("\n");
@@ -172,39 +184,34 @@ void display_all_players() {
 // Menampilkan peringkat Player berdasarkan skor tertinggi
 void display_player_rankings() {
     if (player_queue == NULL || is_queue_empty(player_queue)) {
-        printf("Tidak ada Player untuk diperingkatkan.\n");
-        return;
+        printf("Tidak ada pemain untuk diperingkatkan.\n"); return;
     }
-    
     int count = player_queue->count;
     Player** players = (Player**)malloc(count * sizeof(Player*));
-    if (players == NULL) { printf("Gagal alokasi memori untuk ranking!\n"); return; }
+    if (players == NULL) { return; }
     
-    // Salin pointer Player dari queue ke array
     Player* current = player_queue->front;
-    for (int i = 0; i < count; i++) {
-        players[i] = current;
-        current = current->next;
-    }
+    for (int i = 0; i < count; i++) { players[i] = current; current = current->next; }
     
-    // Urutkan array menggunakan Bubble Sort (cukup untuk jumlah Player kecil)
     for (int i = 0; i < count - 1; i++) {
         for (int j = 0; j < count - i - 1; j++) {
             if (players[j]->score < players[j+1]->score) {
-                Player* temp = players[j];
-                players[j] = players[j+1];
-                players[j+1] = temp;
+                Player* temp = players[j]; players[j] = players[j+1]; players[j+1] = temp;
             }
         }
     }
     
-    print_header("RANKING Player");
+    print_header("RANKING PEMAIN");
     printf("%-5s %-20s %-8s\n", "Rank", "Nama", "Skor");
     printf("------------------------------------\n");
     for (int i = 0; i < count; i++) {
-        printf("%-5d %-20s %-8d\n", i + 1, players[i]->name, players[i]->score);
+        char rank_icon[10];
+        if (i == 0) strcpy(rank_icon, "🥇");
+        else if (i == 1) strcpy(rank_icon, "🥈");
+        else if (i == 2) strcpy(rank_icon, "🥉");
+        else sprintf(rank_icon, "%d", i + 1);
+        printf("%-5s %-20s %-8d\n", rank_icon, players[i]->name, players[i]->score);
     }
-    
     free(players);
     printf("\n");
 }
