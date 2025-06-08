@@ -28,5 +28,7 @@ typedef struct TreeStack {
 
 void push_tree_node(TreeStack** stack, TreeNodePtr node);
 TreeNodePtr pop_tree_node(TreeStack** stack);
+int is_tree_stack_empty(TreeStack* stack);
+void clear_tree_stack(TreeStack** stack);
 
 #endif // STACK_OPERATIONS_H

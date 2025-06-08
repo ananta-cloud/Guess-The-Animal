@@ -143,3 +143,13 @@ TreeNodePtr pop_tree_node(TreeStack** stack) {
     free(top);
     return node;
 }
+
+int is_tree_stack_empty(TreeStack* stack) {
+    return stack == NULL;
+}
+
+void clear_tree_stack(TreeStack** stack) {
+    while (*stack != NULL) {
+        pop_tree_node(stack);
+    }
+}
