@@ -13,6 +13,7 @@ void clear_player_queue(PlayerQueue* queue);
 
 // Fungsi manajemen pemain
 void rotate_to_next_player();
+void update_player_score(Player* player, int points);
 void update_player_stats(Player* player, int was_correct);
 void display_all_players();
 void display_player_rankings();
@@ -24,5 +25,9 @@ int setup_single_player_mode();
 // Fungsi untuk alur giliran pemain
 void start_player_turn(Player* current_player);
 void end_player_turn(Player* current_player, int was_correct);
+
+// Fungsi statistik dan utilitas pemain
+Player* find_best_player();
+int get_total_players();
 
 #endif // QUEUE_OPERATIONS_H

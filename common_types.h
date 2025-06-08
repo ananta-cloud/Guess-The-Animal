@@ -59,6 +59,15 @@ typedef struct PlayerQueue {
 } PlayerQueue;
 extern PlayerQueue* player_queue;
 
+// Node untuk Pertanyaan
+typedef struct QuestionSuggestion {
+    char question[MAX_TEXT_LENGTH];
+    int usage_count;
+    double success_rate;
+    struct QuestionSuggestion* next;
+} QuestionSuggestion;
+extern QuestionSuggestion* suggestion_list;
+
 // Prototipe untuk fungsi utilitas dasar yang diperlukan untuk memproses input pengguna.
 void trim_string(char* str);
 void to_lowercase(char* str);

@@ -11,7 +11,7 @@ PlayerQueue* create_player_queue() {
     return queue;
 }
 
-// Menambahkan data pemain ke akhir antrean (enqueue)
+// Menambahkan data Player ke akhir antrean (enqueue)
 void enqueue_player(PlayerQueue* queue, const char* name) {
     if (queue == NULL) return;
     Player* new_player = (Player*)malloc(sizeof(Player));
@@ -31,10 +31,10 @@ void enqueue_player(PlayerQueue* queue, const char* name) {
         queue->rear = new_player;
     }
     queue->count++;
-    printf("Pemain '%s' ditambahkan ke permainan!\n", name);
+    printf("Player '%s' ditambahkan ke permainan!\n", name);
 }
 
-// Menghapus data antrian pemain dari depan
+// Menghapus data antrian Player dari depan
 Player* dequeue_player(PlayerQueue* queue) {
     if (queue == NULL || queue->front == NULL) return NULL;
     
@@ -48,7 +48,7 @@ Player* dequeue_player(PlayerQueue* queue) {
     return front_player;
 }
 
-// Melihat data pemain
+// Melihat data Player
 Player* peek_current_player(PlayerQueue* queue) {
     if (queue == NULL) return NULL;
     return queue->front;
@@ -59,7 +59,7 @@ int is_queue_empty(PlayerQueue* queue) {
     return (queue == NULL || queue->count == 0);
 }
 
-// Membersihkan data pemain
+// Membersihkan data Player
 void clear_player_queue(PlayerQueue* queue) {
     if (queue == NULL) return;
     while (!is_queue_empty(queue)) {
@@ -74,7 +74,7 @@ void rotate_to_next_player() {
     
     Player* current_player = dequeue_player(player_queue);
     if(current_player) {
-         // Re-enqueue pemain dengan data yang sama
+         // Re-enqueue Player dengan data yang sama
         enqueue_player(player_queue, current_player->name);
         player_queue->rear->score = current_player->score;
         player_queue->rear->games_played = current_player->games_played;
@@ -105,11 +105,11 @@ int setup_multiplayer_mode() {
     int player_count;
     
     print_header("SETUP MODE MULTIPLAYER");
-    printf("Berapa jumlah pemain? (2-4): ");
+    printf("Berapa jumlah Player? (2-4): ");
     if (fgets(input, sizeof(input), stdin) == NULL) return 0;
     player_count = atoi(input);
     if (player_count < 2 || player_count > 4) {
-        printf("Jumlah pemain tidak valid!\n");
+        printf("Jumlah Player tidak valid!\n");
         return 0;
     }
 
@@ -117,7 +117,7 @@ int setup_multiplayer_mode() {
     else player_queue = create_player_queue();
     
     for (int i = 0; i < player_count; i++) {
-        printf("Masukkan nama pemain %d: ", i + 1);
+        printf("Masukkan nama Player %d: ", i + 1);
         fgets(input, sizeof(input), stdin);
         trim_string(input);
         enqueue_player(player_queue, strlen(input) > 0 ? input : "Player");
@@ -130,18 +130,18 @@ int setup_multiplayer_mode() {
 int setup_single_player_mode() {
     if (player_queue != NULL) clear_player_queue(player_queue);
     else player_queue = create_player_queue();
-    enqueue_player(player_queue, "Player 1"); // Pemain default
+    enqueue_player(player_queue, "Player 1"); // Player default
     return 1;
 }
 
-// Menampilkan pesan start giliran pada pemain
+// Menampilkan pesan start giliran pada Player
 void start_player_turn(Player* current_player) {
     if (current_player == NULL) return;
     printf("\n--- GILIRAN: %s ---\n", current_player->name);
     printf("Pikirkan seekor hewan, dan saya akan mencoba menebaknya!\n");
 }
 
-// Menampilkan pesan akhir giliran untuk diupdate di statistik pemain
+// Menampilkan pesan akhir giliran untuk diupdate di statistik Player
 void end_player_turn(Player* current_player, int was_correct) {
     if (current_player == NULL) return;
     
@@ -149,14 +149,14 @@ void end_player_turn(Player* current_player, int was_correct) {
     printf("\nGiliran %s selesai. Skor: %d\n", current_player->name, current_player->score);
 }
 
-// Menampilkan daftar semua pemain beserta statistik mereka
+// Menampilkan daftar semua Player beserta statistik mereka
 void display_all_players() {
     if (player_queue == NULL || is_queue_empty(player_queue)) {
-        printf("Tidak ada pemain yang terdaftar.\n");
+        printf("Tidak ada Player yang terdaftar.\n");
         return;
     }
     
-    print_header("DAFTAR SEMUA PEMAIN");
+    print_header("DAFTAR SEMUA Player");
     printf("%-20s %-8s %-8s\n", "Nama", "Skor", "Main");
     printf("----------------------------------------\n");
     
@@ -169,10 +169,10 @@ void display_all_players() {
     printf("\n");
 }
 
-// Menampilkan peringkat pemain berdasarkan skor tertinggi
+// Menampilkan peringkat Player berdasarkan skor tertinggi
 void display_player_rankings() {
     if (player_queue == NULL || is_queue_empty(player_queue)) {
-        printf("Tidak ada pemain untuk diperingkatkan.\n");
+        printf("Tidak ada Player untuk diperingkatkan.\n");
         return;
     }
     
@@ -180,14 +180,14 @@ void display_player_rankings() {
     Player** players = (Player**)malloc(count * sizeof(Player*));
     if (players == NULL) { printf("Gagal alokasi memori untuk ranking!\n"); return; }
     
-    // Salin pointer pemain dari queue ke array
+    // Salin pointer Player dari queue ke array
     Player* current = player_queue->front;
     for (int i = 0; i < count; i++) {
         players[i] = current;
         current = current->next;
     }
     
-    // Urutkan array menggunakan Bubble Sort (cukup untuk jumlah pemain kecil)
+    // Urutkan array menggunakan Bubble Sort (cukup untuk jumlah Player kecil)
     for (int i = 0; i < count - 1; i++) {
         for (int j = 0; j < count - i - 1; j++) {
             if (players[j]->score < players[j+1]->score) {
@@ -198,7 +198,7 @@ void display_player_rankings() {
         }
     }
     
-    print_header("RANKING PEMAIN");
+    print_header("RANKING Player");
     printf("%-5s %-20s %-8s\n", "Rank", "Nama", "Skor");
     printf("------------------------------------\n");
     for (int i = 0; i < count; i++) {
@@ -207,4 +207,28 @@ void display_player_rankings() {
     
     free(players);
     printf("\n");
+}
+
+// Untuk menemukan Player dengan score tertinggi
+Player* find_best_player() {
+    if (player_queue == NULL || is_queue_empty(player_queue)) {
+        return NULL;
+    }
+    Player* best = player_queue->front;
+    Player* current = player_queue->front->next;
+    while (current != NULL) {
+        if (current->score > best->score) {
+            best = current;
+        }
+        current = current->next;
+    }
+    return best;
+}
+
+// Untuk menghitung total Player
+int get_total_players() {
+    if (player_queue == NULL) {
+        return 0;
+    }
+    return player_queue->count;
 }
