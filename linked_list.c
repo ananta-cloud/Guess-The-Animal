@@ -156,15 +156,25 @@ void display_game_statistics() {
     printf("\n");
 }
 
-void add_question_suggestion(const char* question, int was_successful) {
-    // Cek apakah pertanyaan sudah ada, jika ya, update statistiknya
+void update_question_success_rate(const char* question, int was_successful) {
     QuestionSuggestion* current = suggestion_list;
     while (current != NULL) {
         if (strcmp(current->question, question) == 0) {
             current->usage_count++;
-            // Update success rate menggunakan simple moving average
             double weight = 0.8;
             current->success_rate = (current->success_rate * weight) + ((was_successful ? 100.0 : 0.0) * (1.0 - weight));
+            return;
+        }
+        current = current->next;
+    }
+}
+
+void add_question_suggestion(const char* question, int was_successful) {
+    // Cek apakah sudah ada, jika ya, panggil update terpisah
+    QuestionSuggestion* current = suggestion_list;
+    while (current != NULL) {
+        if (strcmp(current->question, question) == 0) {
+            update_question_success_rate(question, was_successful);
             return;
         }
         current = current->next;
@@ -226,4 +236,32 @@ void clear_suggestions() {
         free(temp);
     }
     suggestion_list = NULL;
+}
+
+GameHistory* find_game_by_number(int game_number) {
+    GameHistory* current = game_history_head;
+    while (current != NULL) {
+        if (current->game_number == game_number) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
+void display_recent_games(int count) {
+    print_header("PERMAINAN TERBARU");
+    GameHistory* current = game_history_head;
+    int displayed = 0;
+    
+    printf("%-5s %-25s %-10s\n", "Game", "Hewan", "Status");
+    printf("------------------------------------------\n");
+    
+    while (current != NULL && displayed < count) {
+        char* status = current->was_correct ? "BENAR" : "SALAH";
+        printf("%-5d %-25s %-10s\n", current->game_number, current->guessed_animal, status);
+        current = current->next;
+        displayed++;
+    }
+    printf("\n");
 }
