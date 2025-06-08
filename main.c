@@ -48,11 +48,16 @@ int main() {
             case 4: 
                 handle_admin_menu(); 
                 break;
-            case 5:
-                print_goodbye();
-                cleanup_system();
-                free_tree(root);
-                return 0;
+            case 5: 
+                show_help_information(); 
+                ready(); 
+                break;
+            case 6:
+                    display_session_summary();
+                    print_goodbye();
+                    cleanup_system();
+                    free_tree(root);
+                    return 0;
             default: printf("Pilihan tidak valid!\n");
         }
     }
@@ -98,29 +103,34 @@ void handle_game_menu() {
  * @brief Menangani navigasi dan logika untuk menu statistik.
  */
 void handle_statistics_menu() {
-    int stats_choice;
+    int choice;
     while (1) {
         print_statistics_menu();
-        stats_choice = get_menu_choice(4);
+        choice = get_menu_choice(6);
 
-        switch(stats_choice) {
-            case 1:
-                display_game_statistics();
-                printf("STATISTIK DATABASE:\n");
-                printf("   Total hewan diketahui: %d\n", count_total_animals(root));
-                printf("   Kedalaman pengetahuan: %d level\n", calculate_tree_depth(root));
-                ready();
+        switch(choice) {
+            case 1: 
+                display_comprehensive_statistics(); 
+                ready(); 
                 break;
-            case 2:
-                display_game_history();
-                ready();
+            case 2: 
+                display_game_history(); 
+                ready(); 
                 break;
-            case 3:
-                display_player_rankings();
-                ready();
+            case 3: 
+                display_player_rankings(); 
+                ready(); 
                 break;
-            case 4:
-                return; // Kembali
+            case 4: 
+                display_question_suggestions(); 
+                ready(); 
+                break;
+            case 5: 
+                display_learning_analytics(); 
+                ready(); 
+                break;
+            case 6: 
+            return;
         }
     }
 }
