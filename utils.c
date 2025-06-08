@@ -239,3 +239,60 @@ int restore_system_backup() {
     printf("Harap muat ulang data dari menu atau restart aplikasi.\n");
     return 1;
 }
+
+// --- IMPLEMENTASI FUNGSI VALIDASI INPUT BARU ---
+int get_valid_integer(int min, int max) {
+    char input[20]; int value;
+    while (1) {
+        if (fgets(input, sizeof(input), stdin) != NULL) {
+            value = atoi(input);
+            if (value >= min && value <= max) return value;
+        }
+        printf("Input tidak valid! Masukkan angka antara %d-%d: ", min, max);
+    }
+}
+
+void get_valid_string(char* buffer, int max_length, const char* prompt) {
+    char temp[256];
+    while (1) {
+        printf("%s", prompt);
+        if (fgets(temp, sizeof(temp), stdin) != NULL) {
+            trim_string(temp);
+            if (strlen(temp) > 0 && strlen(temp) < max_length) {
+                strcpy(buffer, temp);
+                return;
+            }
+        }
+        printf("Input tidak boleh kosong! Coba lagi.\n");
+    }
+}
+
+// --- IMPLEMENTASI FUNGSI TAMPILAN BARU ---
+void display_system_status() {
+    print_header("STATUS SISTEM");
+    FILE* db = fopen(DEFAULT_DB_FILE, "r");
+    printf("   Database Utama (%s): %s\n", DEFAULT_DB_FILE, db ? "Ada" : "Tidak Ditemukan");
+    if(db) fclose(db);
+    // ... (cek file lainnya)
+}
+
+// --- IMPLEMENTASI FUNGSI UTILITAS WAKTU ---
+char* format_timestamp(time_t timestamp) {
+    static char buffer[50];
+    strftime(buffer, sizeof(buffer), "%d/%m/%Y %H:%M:%S", localtime(&timestamp));
+    return buffer;
+}
+
+int get_days_since_last_play() {
+    if (game_history_head == NULL) return -1;
+    time_t now = time(NULL);
+    double diff = difftime(now, game_history_head->timestamp);
+    return (int)(diff / (24 * 60 * 60));
+}
+
+void display_session_summary() {
+    print_header("RINGKASAN SESI");
+    int days = get_days_since_last_play();
+    if (days != -1) printf("Terakhir bermain: %d hari yang lalu.\n", days);
+    printf("Terima kasih telah bermain!\n");
+}
