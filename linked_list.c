@@ -155,3 +155,47 @@ void display_game_statistics() {
     printf("Tingkat Keberhasilan : %.1f%%\n", success_rate);
     printf("\n");
 }
+
+void add_question_suggestion(const char* question, int was_successful) {
+    // Cek apakah pertanyaan sudah ada, jika ya, update statistiknya
+    QuestionSuggestion* current = suggestion_list;
+    while (current != NULL) {
+        if (strcmp(current->question, question) == 0) {
+            current->usage_count++;
+            // Update success rate menggunakan simple moving average
+            double weight = 0.8;
+            current->success_rate = (current->success_rate * weight) + ((was_successful ? 100.0 : 0.0) * (1.0 - weight));
+            return;
+        }
+        current = current->next;
+    }
+    
+    // Jika tidak ada, buat node baru
+    QuestionSuggestion* new_suggestion = (QuestionSuggestion*)malloc(sizeof(QuestionSuggestion));
+    if (new_suggestion == NULL) return;
+    
+    strncpy(new_suggestion->question, question, MAX_TEXT_LENGTH - 1);
+    new_suggestion->question[MAX_TEXT_LENGTH - 1] = '\0';
+    new_suggestion->usage_count = 1;
+    new_suggestion->success_rate = was_successful ? 100.0 : 0.0;
+    new_suggestion->next = suggestion_list;
+    suggestion_list = new_suggestion;
+}
+
+char* get_best_question_suggestion() {
+    if (suggestion_list == NULL) return "Tidak ada saran.";
+    
+    QuestionSuggestion* best = suggestion_list;
+    QuestionSuggestion* current = suggestion_list->next;
+    
+    while (current != NULL) {
+        // Skor = success_rate * bobot penggunaan
+        double best_score = best->success_rate * (best->usage_count > 2 ? 1.0 : 0.5);
+        double current_score = current->success_rate * (current->usage_count > 2 ? 1.0 : 0.5);
+        if (current_score > best_score) {
+            best = current;
+        }
+        current = current->next;
+    }
+    return best->question;
+}
