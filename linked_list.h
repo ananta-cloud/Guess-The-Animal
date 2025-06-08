@@ -21,5 +21,6 @@ void display_game_statistics();
 // Modul untuk saran pertanyaan
 void add_question_suggestion(const char* question, int was_successful);
 char* get_best_question_suggestion();
+void display_question_suggestions();
 
 #endif // LINKED_LIST_H

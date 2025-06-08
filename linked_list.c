@@ -199,3 +199,21 @@ char* get_best_question_suggestion() {
     }
     return best->question;
 }
+
+void display_question_suggestions() {
+    if (suggestion_list == NULL) {
+        printf("Belum ada data saran pertanyaan.\n");
+        return;
+    }
+    
+    print_header("ANALISIS EFEKTIVITAS PERTANYAAN");
+    printf("%-40s %-10s %-15s\n", "Pertanyaan", "Digunakan", "Rate Sukses");
+    printf("------------------------------------------------------------------\n");
+    
+    QuestionSuggestion* current = suggestion_list;
+    while (current != NULL) {
+        printf("%-40.40s %-10d %.1f%%\n", current->question, current->usage_count, current->success_rate);
+        current = current->next;
+    }
+    printf("\n");
+}
