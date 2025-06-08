@@ -48,3 +48,7 @@ int get_answer() {
     }
     return -1; // Error saat membaca input
 }
+
+void print_separator() {
+    printf("==================================================\n");
+}

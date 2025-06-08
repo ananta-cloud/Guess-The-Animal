@@ -73,5 +73,6 @@ void trim_string(char* str);
 void to_lowercase(char* str);
 int get_answer();
 void print_header(const char* title);
+void print_separator();
 
 #endif // COMMON_TYPES_H
