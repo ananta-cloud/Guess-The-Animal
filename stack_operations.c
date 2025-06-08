@@ -104,3 +104,23 @@ int get_undo_stack_size() {
     }
     return count;
 }
+
+void display_undo_history() {
+    if (is_undo_stack_empty()) {
+        printf("Tidak ada riwayat operasi yang bisa di-undo.\n");
+        return;
+    }
+    
+    print_header("RIWAYAT OPERASI (UNDO)");
+    printf("%-5s %-15s %-40s\n", "No.", "Operasi", "Teks Node Asli");
+    printf("----------------------------------------------------------------\n");
+    
+    UndoStack* current = undo_stack_top;
+    int count = 1;
+    while (current != NULL) {
+        printf("%-5d %-15s %-40s\n", count, current->operation_type, current->original_text);
+        current = current->next;
+        count++;
+    }
+    printf("\n");
+}

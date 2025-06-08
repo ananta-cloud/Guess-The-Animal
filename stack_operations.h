@@ -17,6 +17,7 @@ void clear_undo_stack();
 int is_undo_stack_empty();
 
 int get_undo_stack_size();
+void display_undo_history();
 void save_current_state_before_learning(TreeNodePtr node);
 
 #endif // STACK_OPERATIONS_H
