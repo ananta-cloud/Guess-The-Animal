@@ -17,4 +17,9 @@ int load_or_create_database(TreeNodePtr* head);
 void choice(TreeNodePtr start, TreeNodePtr* last_accessed);
 int ask_if_animal(TreeNodePtr start);
 void build_question(TreeNodePtr start);
+
+// --- FUNGSI ANALISIS TREE BARU ---
+int count_total_animals(TreeNodePtr root);
+int calculate_tree_depth(TreeNodePtr root);
+void display_all_animals(TreeNodePtr root);
 #endif // TREE_OPERATIONS_H

@@ -1,4 +1,7 @@
 #include "utils.h"
+#include "linked_list.h"
+#include "stack_operations.h"
+#include "queue_operations.h"
 
 void print_separator() {
     printf("==================================================\n");
@@ -21,6 +24,16 @@ void print_main_menu() {
     printf("Pilih menu (1-5): ");
 }
 
+void print_statistics_menu() {
+    print_header("MENU STATISTIK");
+    printf("1. Statistik Umum Permainan\n");
+    printf("2. Riwayat Permainan Lengkap\n");
+    printf("3. Peringkat Pemain (Multiplayer)\n");
+    printf("4. Kembali ke Menu Utama\n");
+    print_separator();
+    printf("Pilih opsi (1-4): ");
+}
+
 void print_game_menu() {
     print_header("MENU PERMAINAN");
     printf("1. Main Sekali\n");
@@ -29,6 +42,7 @@ void print_game_menu() {
     print_separator();
     printf("Pilih opsi (1-3): ");
 }
+
 
 void print_admin_menu() {
     print_header("MENU ADMIN");

@@ -1,6 +1,8 @@
 #include "tree_operations.h"
 #include "stack_operations.h"
 
+
+
 // Untuk Membuat Tree pertnayaan sederhana
 TreeNodePtr create_default_tree() {
     // Alokasi memori untuk setiap node
@@ -201,3 +203,52 @@ void build_question(TreeNodePtr start) {
     printf("Terima kasih! Saya telah belajar sesuatu yang baru!\n");
     printf("Tips: Anda dapat membatalkan pembelajaran ini melalui Menu Admin.\n");
 }
+
+/**
+ * @brief Menghitung jumlah total hewan (leaf nodes) di dalam tree.
+ * @param root Node awal.
+ * @return Jumlah hewan.
+ */
+int count_total_animals(TreeNodePtr root) {
+    if (root == NULL) return 0;
+    
+    if (root->yes_ans == NULL && root->no_ans == NULL) {
+        return 1; // Ini adalah leaf node (hewan)
+    }
+    
+    return count_total_animals(root->yes_ans) + count_total_animals(root->no_ans);
+}
+
+/**
+ * @brief Menghitung kedalaman (jumlah level) dari tree.
+ * @param root Node awal.
+ * @return Kedalaman tree.
+ */
+int calculate_tree_depth(TreeNodePtr root) {
+    if (root == NULL) return 0;
+    
+    int left_depth = calculate_tree_depth(root->yes_ans);
+    int right_depth = calculate_tree_depth(root->no_ans);
+    
+    // Kedalaman adalah 1 (level saat ini) + kedalaman sub-tree yang lebih dalam
+    return 1 + (left_depth > right_depth ? left_depth : right_depth);
+}
+
+/**
+ * @brief Menampilkan semua nama hewan (leaf nodes) di dalam tree.
+ * @param root Node awal.
+ */
+void display_all_animals(TreeNodePtr root) {
+    if (root == NULL) return;
+    
+    // Jika ini leaf node, cetak teksnya
+    if (root->yes_ans == NULL && root->no_ans == NULL) {
+        printf("- %s\n", root->text);
+        return;
+    }
+    
+    // Lanjutkan ke anak kiri dan kanan
+    display_all_animals(root->yes_ans);
+    display_all_animals(root->no_ans);
+}
+

@@ -8,7 +8,9 @@ void print_separator();
 void print_header(const char* title);
 void print_game_menu();
 void print_main_menu();
+void print_statistics_menu();
 void print_admin_menu();
+int get_menu_choice(int max_choice);
 
 // Fungsi untuk alur permainan
 int get_menu_choice(int max_choice);
