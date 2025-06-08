@@ -19,6 +19,8 @@ void push_undo_state(TreeNodePtr node, const char* original_text,
     new_undo->next = undo_stack_top;
     
     undo_stack_top = new_undo;
+    
+    printf("State disimpan untuk undo (Operasi: %s)\n", operation_type);
 }
 
 int pop_undo_state(TreeNodePtr* node, char* original_text, 
@@ -48,30 +50,30 @@ int undo_last_operation(TreeNodePtr root) {
         return 0;
     }
     
-    TreeNodePtr node_to_restore;
+    TreeNodePtr node;
     char original_text[MAX_TEXT_LENGTH];
     TreeNodePtr original_yes, original_no;
     char operation_type[20];
     
-    if (pop_undo_state(&node_to_restore, original_text, &original_yes, &original_no, operation_type)) {
-        // Jika operasi adalah "LEARN", node yang baru dibuat harus dihapus.
+    if (pop_undo_state(&node, original_text, &original_yes, &original_no, operation_type)) {
+        // mengembalikan keadaan Node
+        strcpy(node->text, original_text);
+        
+        // Membebaskan node yang baru dibuat jika operasi yang dilakukan adalah "LEARN"
         if (strcmp(operation_type, "LEARN") == 0) {
-            // Yes dan No yang baru dibuat saat 'build_question'
-            // harus di-free untuk menghindari memory leak.
-            if (node_to_restore->yes_ans != original_yes) {
-                free(node_to_restore->yes_ans);
+            if (node->yes_ans && node->yes_ans != original_yes) {
+                free(node->yes_ans);
             }
-            if (node_to_restore->no_ans != original_no) {
-                free(node_to_restore->no_ans);
+            if (node->no_ans && node->no_ans != original_no) {
+                free(node->no_ans);
             }
         }
-
-        // Kembalikan node ke state aslinya.
-        strcpy(node_to_restore->text, original_text);
-        node_to_restore->yes_ans = original_yes;
-        node_to_restore->no_ans = original_no;
+        
+        node->yes_ans = original_yes;
+        node->no_ans = original_no;
         
         printf("Operasi '%s' berhasil dibatalkan!\n", operation_type);
+        printf("Node dikembalikan ke: \"%s\"\n", original_text);
         return 1;
     }
     
@@ -84,6 +86,7 @@ void clear_undo_stack() {
         undo_stack_top = undo_stack_top->next;
         free(temp);
     }
+    printf("Undo stack telah dibersihkan.\n");
 }
 
 int is_undo_stack_empty() {
@@ -107,27 +110,38 @@ int get_undo_stack_size() {
 
 void display_undo_history() {
     if (is_undo_stack_empty()) {
-        printf("Tidak ada riwayat operasi yang bisa di-undo.\n");
+        printf("Tidak ada riwayat undo.\n");
         return;
     }
     
-    print_header("RIWAYAT OPERASI (UNDO)");
-    printf("%-5s %-15s %-40s\n", "No.", "Operasi", "Teks Node Asli");
+    print_header("RIWAYAT OPERASI UNDO");
+    printf("%-5s %-15s %-40s\n", "No", "Jenis Operasi", "Text Asli");
     printf("----------------------------------------------------------------\n");
     
     UndoStack* current = undo_stack_top;
     int count = 1;
+    
     while (current != NULL) {
-        printf("%-5d %-15s %-40s\n", count, current->operation_type, current->original_text);
+        printf("%-5d %-15s %-40s\n", 
+               count,
+               current->operation_type,
+               current->original_text);
         current = current->next;
         count++;
     }
-    printf("\n");
+    printf("\nTotal operasi yang dapat di-undo: %d\n\n", count - 1);
+}
+
+UndoStack* peek_undo_stack() {
+    return undo_stack_top;
 }
 
 void push_tree_node(TreeStack** stack, TreeNodePtr node) {
     TreeStack* new_stack_node = (TreeStack*)malloc(sizeof(TreeStack));
-    if (new_stack_node == NULL) { return; }
+    if (new_stack_node == NULL) {
+        printf("Error: Tidak cukup memory untuk tree stack!\n");
+        return;
+    }
     
     new_stack_node->node = node;
     new_stack_node->next = *stack;
@@ -141,6 +155,7 @@ TreeNodePtr pop_tree_node(TreeStack** stack) {
     TreeNodePtr node = top->node;
     *stack = top->next;
     free(top);
+    
     return node;
 }
 

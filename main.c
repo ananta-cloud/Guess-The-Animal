@@ -48,11 +48,16 @@ int main() {
             case 4: 
                 handle_admin_menu(); 
                 break;
-            case 5:
-                print_goodbye();
-                cleanup_system();
-                free_tree(root);
-                return 0;
+            case 5: 
+                show_help_information(); 
+                ready(); 
+                break;
+            case 6:
+                    display_session_summary();
+                    print_goodbye();
+                    cleanup_system();
+                    free_tree(root);
+                    return 0;
             default: printf("Pilihan tidak valid!\n");
         }
     }
@@ -98,29 +103,34 @@ void handle_game_menu() {
  * @brief Menangani navigasi dan logika untuk menu statistik.
  */
 void handle_statistics_menu() {
-    int stats_choice;
+    int choice;
     while (1) {
         print_statistics_menu();
-        stats_choice = get_menu_choice(4);
+        choice = get_menu_choice(6);
 
-        switch(stats_choice) {
-            case 1:
-                display_game_statistics();
-                printf("STATISTIK DATABASE:\n");
-                printf("   Total hewan diketahui: %d\n", count_total_animals(root));
-                printf("   Kedalaman pengetahuan: %d level\n", calculate_tree_depth(root));
-                ready();
+        switch(choice) {
+            case 1: 
+                display_comprehensive_statistics(); 
+                ready(); 
                 break;
-            case 2:
-                display_game_history();
-                ready();
+            case 2: 
+                display_game_history(); 
+                ready(); 
                 break;
-            case 3:
-                display_player_rankings();
-                ready();
+            case 3: 
+                display_player_rankings(); 
+                ready(); 
                 break;
-            case 4:
-                return; // Kembali
+            case 4: 
+                display_question_suggestions(); 
+                ready(); 
+                break;
+            case 5: 
+                display_learning_analytics(); 
+                ready(); 
+                break;
+            case 6: 
+            return;
         }
     }
 }
@@ -129,48 +139,71 @@ void play_single_round() {
     TreeNodePtr last_node = NULL;
     Player* current_player = NULL;
     int was_correct = 0;
-
-    printf("\n-- GAME #%d --\n", game_counter);
-
+    
+    printf("\n");
+    print_separator();
+    printf("GAME #%d\n", game_counter);
+    print_separator();
+    
+    // Handle multiplayer turn
     if (is_multiplayer) {
         current_player = peek_current_player(player_queue);
+        if (current_player == NULL) {
+            printf("Tidak ada player aktif!\n");
+            return;
+        }
         start_player_turn(current_player);
     } else {
-        printf("Pikirkan seekor hewan, saya akan menebaknya!\n");
+        printf("Pikirkan seekor hewan, dan saya akan mencoba menebaknya!\n");
+        ready();
     }
     
+    // Start the guessing process
     choice(root, &last_node);
-
+    
     if (last_node != NULL) {
         was_correct = ask_if_animal(last_node);
         
         if (was_correct) {
             printf("\nYeay! Saya berhasil menebak hewan Anda!\n");
+            printf("Saya memang pintar, kan?\n");
         } else {
+            printf("\nHmm, saya belum bisa menebak dengan benar.\n");
+            printf("Mari bantu saya belajar!\n\n");
             build_question(last_node);
-            auto_save_tree(root); // Simpan tree setelah belajar
+            
+            // Auto-save after learning
+            if (auto_save_tree(root) == 0) {
+                printf("Pembelajaran berhasil disimpan!\n");
+            }
         }
         
-        // Tambahkan hasil permainan ke riwayat
+        // Add to game history
         add_game_history(game_counter, last_node->text, was_correct);
-        if (is_multiplayer) {
+        
+        // Update player stats if multiplayer
+        if (is_multiplayer && current_player != NULL) {
             end_player_turn(current_player, was_correct);
-            rotate_to_next_player();
+            rotate_to_next_player(); // Move to next player
         }
+        
         game_counter++;
     } else {
-        printf("Error: Terjadi kesalahan!\n");
+        printf("Error: Tidak dapat memproses permainan!\n");
     }
+    
+    printf("\n");
     ready();
 }
 
 void handle_admin_menu() {
     int admin_choice;
-    print_admin_menu();
-    admin_choice = get_menu_choice(7);
-
-    switch (admin_choice) {
-        case 1:
+    while (1) {
+        print_admin_menu();
+        admin_choice = get_menu_choice(7);
+        
+        switch (admin_choice) {
+            case 1:
                 iterative_preorder_traversal(root);
                 ready();
                 break;
@@ -205,8 +238,12 @@ void handle_admin_menu() {
                 }
                 ready();
                 break;
-            case 7:
-                return; // Kembali ke menu utama
+                case 7:
+                display_system_status();
+                ready();
+                break;
+            case 8:
+                return;
+        }
     }
-    ready();
 }

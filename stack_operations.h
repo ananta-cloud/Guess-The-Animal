@@ -18,6 +18,7 @@ int is_undo_stack_empty();
 
 int get_undo_stack_size();
 void display_undo_history();
+UndoStack* peek_undo_stack();
 void save_current_state_before_learning(TreeNodePtr node);
 
 // Struct untuk traversal tree
