@@ -237,3 +237,31 @@ void clear_suggestions() {
     }
     suggestion_list = NULL;
 }
+
+GameHistory* find_game_by_number(int game_number) {
+    GameHistory* current = game_history_head;
+    while (current != NULL) {
+        if (current->game_number == game_number) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
+void display_recent_games(int count) {
+    print_header("PERMAINAN TERBARU");
+    GameHistory* current = game_history_head;
+    int displayed = 0;
+    
+    printf("%-5s %-25s %-10s\n", "Game", "Hewan", "Status");
+    printf("------------------------------------------\n");
+    
+    while (current != NULL && displayed < count) {
+        char* status = current->was_correct ? "BENAR" : "SALAH";
+        printf("%-5d %-25s %-10s\n", current->game_number, current->guessed_animal, status);
+        current = current->next;
+        displayed++;
+    }
+    printf("\n");
+}

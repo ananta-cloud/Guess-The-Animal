@@ -25,4 +25,8 @@ void display_question_suggestions();
 void update_question_success_rate(const char* question, int was_successful);
 void clear_suggestions();
 
+// Modul untuk riwayat
+GameHistory* find_game_by_number(int game_number);
+void display_recent_games(int count);
+
 #endif // LINKED_LIST_H
