@@ -1,8 +1,6 @@
 #include "tree_operations.h"
 #include "stack_operations.h"
 
-
-
 // Untuk Membuat Tree pertnayaan sederhana
 TreeNodePtr create_default_tree() {
     // Alokasi memori untuk setiap node
@@ -252,3 +250,64 @@ void display_all_animals(TreeNodePtr root) {
     display_all_animals(root->no_ans);
 }
 
+/**
+ * @brief Membuat salinan cadangan dari file database utama.
+ * @return 0 jika berhasil, 1 jika gagal.
+ */
+int create_backup() {
+    FILE* source = fopen(DEFAULT_DB_FILE, "rb");
+    FILE* dest = fopen(BACKUP_DB_FILE, "wb");
+    
+    if (source == NULL || dest == NULL) {
+        if (source) fclose(source);
+        if (dest) fclose(dest);
+        return 1;
+    }
+    
+    char buffer[1024];
+    size_t bytes;
+    
+    while ((bytes = fread(buffer, 1, sizeof(buffer), source)) > 0) {
+        fwrite(buffer, 1, bytes, dest);
+    }
+    
+    fclose(source);
+    fclose(dest);
+    return 0;
+}
+
+/**
+ * @brief Melakukan traversal pre-order secara iteratif untuk menampilkan struktur tree.
+ * @param root Node awal.
+ */
+void iterative_preorder_traversal(TreeNodePtr root) {
+    if (root == NULL) return;
+    
+    TreeStack* stack = NULL;
+    push_tree_node(&stack, root);
+    
+    print_header("STRUKTUR TREE PENGETAHUAN");
+    int level = 0;
+    
+    while (!is_tree_stack_empty(stack)) {
+        TreeNodePtr current = pop_tree_node(&stack);
+        
+        // Cetak indentasi untuk menunjukkan level
+        for (int i = 0; i < level; i++) printf("  ");
+        
+        if (current->yes_ans == NULL && current->no_ans == NULL) {
+            printf("-> Jawaban: %s\n", current->text);
+        } else {
+            printf("-> Pertanyaan: %s\n", current->text);
+        }
+        
+        // Push anak kanan dulu, lalu kiri, agar kiri diproses lebih dulu
+        if (current->no_ans) push_tree_node(&stack, current->no_ans);
+        if (current->yes_ans) push_tree_node(&stack, current->yes_ans);
+        
+        // Perkiraan level (tidak sempurna, tapi cukup untuk visualisasi sederhana)
+        if(current->yes_ans || current->no_ans) level++;
+    }
+    
+    clear_tree_stack(&stack);
+}

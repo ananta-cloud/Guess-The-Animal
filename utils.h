@@ -22,5 +22,9 @@ int play_again();
 // Fungsi sistem
 void initialize_system();
 void cleanup_system();
+void reset_all_data();
+int create_system_backup();
+int restore_system_backup();
+int confirm_action(const char* action);
 
 #endif // UTILS_H

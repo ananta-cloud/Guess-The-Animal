@@ -89,3 +89,67 @@ void clear_undo_stack() {
 int is_undo_stack_empty() {
     return undo_stack_top == NULL;
 }
+
+void save_current_state_before_learning(TreeNodePtr node) {
+    if (node == NULL) return;
+    push_undo_state(node, node->text, node->yes_ans, node->no_ans, "LEARN");
+}
+
+int get_undo_stack_size() {
+    int count = 0;
+    UndoStack* current = undo_stack_top;
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+    return count;
+}
+
+void display_undo_history() {
+    if (is_undo_stack_empty()) {
+        printf("Tidak ada riwayat operasi yang bisa di-undo.\n");
+        return;
+    }
+    
+    print_header("RIWAYAT OPERASI (UNDO)");
+    printf("%-5s %-15s %-40s\n", "No.", "Operasi", "Teks Node Asli");
+    printf("----------------------------------------------------------------\n");
+    
+    UndoStack* current = undo_stack_top;
+    int count = 1;
+    while (current != NULL) {
+        printf("%-5d %-15s %-40s\n", count, current->operation_type, current->original_text);
+        current = current->next;
+        count++;
+    }
+    printf("\n");
+}
+
+void push_tree_node(TreeStack** stack, TreeNodePtr node) {
+    TreeStack* new_stack_node = (TreeStack*)malloc(sizeof(TreeStack));
+    if (new_stack_node == NULL) { return; }
+    
+    new_stack_node->node = node;
+    new_stack_node->next = *stack;
+    *stack = new_stack_node;
+}
+
+TreeNodePtr pop_tree_node(TreeStack** stack) {
+    if (*stack == NULL) return NULL;
+    
+    TreeStack* top = *stack;
+    TreeNodePtr node = top->node;
+    *stack = top->next;
+    free(top);
+    return node;
+}
+
+int is_tree_stack_empty(TreeStack* stack) {
+    return stack == NULL;
+}
+
+void clear_tree_stack(TreeStack** stack) {
+    while (*stack != NULL) {
+        pop_tree_node(stack);
+    }
+}
