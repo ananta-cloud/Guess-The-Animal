@@ -1,11 +1,7 @@
 #include "linked_list.h"
+#include "utils.h"
+#include "common_types.h"
 
-/**
- * @brief Menambahkan entri baru ke awal linked list riwayat permainan.
- * @param game_number Nomor urut permainan.
- * @param animal Nama hewan yang ditebak.
- * @param was_correct Status apakah tebakan benar (1) atau salah (0).
- */
 void add_game_history(int game_number, const char* animal, int was_correct) {
     GameHistory* new_history = (GameHistory*)malloc(sizeof(GameHistory));
     if (new_history == NULL) {
@@ -23,9 +19,6 @@ void add_game_history(int game_number, const char* animal, int was_correct) {
     game_history_head = new_history;
 }
 
-/**
- * @brief Menampilkan semua riwayat permainan yang tersimpan di linked list.
- */
 void display_game_history() {
     if (game_history_head == NULL) {
         printf("Belum ada riwayat permainan.\n");
@@ -53,9 +46,6 @@ void display_game_history() {
     printf("\n");
 }
 
-/**
- * @brief Membebaskan semua memori yang digunakan oleh linked list riwayat.
- */
 void clear_game_history() {
     GameHistory* current = game_history_head;
     while (current != NULL) {
@@ -66,9 +56,6 @@ void clear_game_history() {
     game_history_head = NULL;
 }
 
-/**
- * @brief Menyimpan seluruh riwayat permainan dari linked list ke file.
- */
 void save_history_to_file() {
     FILE* file = fopen(HISTORY_FILE, "w");
     if (file == NULL) return;
@@ -86,9 +73,6 @@ void save_history_to_file() {
     fclose(file);
 }
 
-/**
- * @brief Memuat riwayat permainan dari file ke dalam linked list.
- */
 void load_history_from_file() {
     FILE* file = fopen(HISTORY_FILE, "r");
     if (file == NULL) return;
@@ -128,4 +112,46 @@ void load_history_from_file() {
         }
     }
     fclose(file);
+}
+
+int get_total_games() {
+    int count = 0;
+    GameHistory* current = game_history_head;
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+    return count;
+}
+
+int get_correct_guesses() {
+    int count = 0;
+    GameHistory* current = game_history_head;
+    while (current != NULL) {
+        if (current->was_correct) count++;
+        current = current->next;
+    }
+    return count;
+}
+
+double get_success_rate() {
+    int total = get_total_games();
+    if (total == 0) return 0.0;
+    
+    int correct = get_correct_guesses();
+    return ((double)correct / total) * 100.0;
+}
+
+void display_game_statistics() {
+    print_header("STATISTIK PERMAINAN");
+    
+    int total_games = get_total_games();
+    int correct_guesses = get_correct_guesses();
+    double success_rate = get_success_rate();
+    
+    printf("Total Permainan      : %d\n", total_games);
+    printf("Tebakan Benar        : %d\n", correct_guesses);
+    printf("Tebakan Salah        : %d\n", total_games - correct_guesses);
+    printf("Tingkat Keberhasilan : %.1f%%\n", success_rate);
+    printf("\n");
 }
