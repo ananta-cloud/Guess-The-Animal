@@ -4,6 +4,8 @@
 #include "common_types.h"
 
 // Menu and UI functions
+void print_separator(); // <-- Deklarasi resmi
+void print_header(const char* title); // <-- Deklarasi resmi
 void print_main_menu();
 void print_game_menu();
 void print_statistics_menu();

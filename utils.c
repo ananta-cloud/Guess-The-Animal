@@ -70,7 +70,7 @@ int get_menu_choice(int max_choice) {
 void print_welcome() {
     system("clear || cls"); // Clear screen for both Unix and Windows
     print_separator();
-    printf("SELAMAT DATANG DI ANIMAL GUESSING GAME! 🎉\n");
+    printf("SELAMAT DATANG DI ANIMAL GUESSING GAME!\n");
     print_separator();
     printf("Pikirkan seekor hewan, dan saya akan mencoba menebaknya!\n");
     printf("Saya akan belajar dari setiap permainan untuk menjadi lebih pintar.\n");
@@ -439,4 +439,14 @@ void display_session_summary() {
     
     printf("\nTerima kasih telah bermain!\n");
     printf("Data otomatis tersimpan.\n\n");
+}
+
+void print_separator() {
+    printf("==================================================\n");
+}
+
+void print_header(const char* title) {
+    print_separator();
+    printf("          %s\n", title);
+    print_separator();
 }

@@ -1,4 +1,5 @@
 #include "stack_operations.h"
+#include "utils.h"
 
 void push_undo_state(TreeNodePtr node, const char* original_text, 
                      TreeNodePtr original_yes, TreeNodePtr original_no, 
