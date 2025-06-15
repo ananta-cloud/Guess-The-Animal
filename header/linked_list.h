@@ -1,7 +1,7 @@
 #ifndef LINKED_LIST_H
 #define LINKED_LIST_H
 
-#include "common_types.h"
+#include "../header.h"
 
 // Modul untuk Riwayat Permainan (Linked List)
 void add_game_history(int game_number, const char* animal, int was_correct);

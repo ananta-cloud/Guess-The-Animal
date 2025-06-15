@@ -1,7 +1,7 @@
 #ifndef STACK_OPERATIONS_H
 #define STACK_OPERATIONS_H
 
-#include "common_types.h"
+#include "../header.h"
 
 // Operasi stack untuk fungsionalitas undo
 void push_undo_state(TreeNodePtr node, const char* original_text, 

@@ -1,5 +1,4 @@
-#include "linked_list.h"
-#include "utils.h"
+#include "../header.h"
 
 void add_game_history(int game_number, const char* animal, int was_correct) {
     GameHistory* new_history = (GameHistory*)malloc(sizeof(GameHistory));

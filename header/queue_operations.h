@@ -1,7 +1,7 @@
 #ifndef QUEUE_OPERATIONS_H
 #define QUEUE_OPERATIONS_H
 
-#include "common_types.h"
+#include "../header.h"
 
 // Operasi Queue untuk manajemen pemain
 PlayerQueue* create_player_queue();

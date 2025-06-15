@@ -1,5 +1,4 @@
-#include "common_types.h"
-#include "utils.h"
+#include "../header.h"
 
 // Inisialisasi vaiabel global
 GameHistory* game_history_head = NULL;
