@@ -1,4 +1,4 @@
-#include "../header.h"
+#include "../header/queue_operations.h"
 
 // Membuat antrian player baru
 PlayerQueue* create_player_queue() {

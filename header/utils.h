@@ -1,7 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include "../header.h"
+#include "common_types.h"
 
 // Menu and UI functions
 void print_main_menu();

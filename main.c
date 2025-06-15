@@ -1,4 +1,9 @@
-#include "../header.h"
+#include "header/common_types.h"
+#include "header/tree_operations.h"
+#include "header/linked_list.h"
+#include "header/stack_operations.h"
+#include "header/queue_operations.h"
+#include "header/utils.h"
 
 // Global variables
 TreeNodePtr root = NULL;

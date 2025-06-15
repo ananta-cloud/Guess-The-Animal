@@ -1,4 +1,4 @@
-#include "../header.h"
+#include "../header/stack_operations.h"
 
 void push_undo_state(TreeNodePtr node, const char* original_text, 
                      TreeNodePtr original_yes, TreeNodePtr original_no, 

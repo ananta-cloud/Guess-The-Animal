@@ -1,4 +1,5 @@
-#include "../header.h"
+#include "../header/tree_operations.h"
+#include "../header/stack_operations.h"
 
 TreeNodePtr create_default_tree() {
     // Alokasi memori untuk semua node

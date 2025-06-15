@@ -1,4 +1,8 @@
-#include "../header.h"
+#include "../header/tree_operations.h"
+#include "../header/linked_list.h"
+#include "../header/stack_operations.h"
+#include "../header/queue_operations.h"
+#include "../header/utils.h"
 
 void print_main_menu() {
     print_header("ANIMAL GUESSING GAME - MENU UTAMA");

@@ -1,7 +1,7 @@
 #ifndef TREE_OPERATIONS_H
 #define TREE_OPERATIONS_H
 
-#include "../header.h"
+#include "common_types.h"
 
 // Tree management functions
 TreeNodePtr create_default_tree();

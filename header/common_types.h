@@ -1,7 +1,11 @@
 #ifndef COMMON_TYPES_H
 #define COMMON_TYPES_H
 
-#include "../header.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <time.h>
 
 #define MAX_TEXT_LENGTH 256
 #define MAX_NAME_LENGTH 128

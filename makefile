@@ -1,86 +1,53 @@
-#==============================================================================
-# Makefile for Guess-The-Animal C Project
-#==============================================================================
+# Makefile Sederhana untuk Proyek C/C++
+# Versi ini tidak membuat direktori atau file perantara (.o).
 
-# 1. Variabel yang Dapat Dikonfigurasi
-#==============================================================================
+#---[ 1. Konfigurasi Proyek ]--------------------------------------------------
 
-# Compiler C
-CC := gcc
+# Compiler yang akan digunakan
+CC = gcc
 
-# Nama file eksekusi akhir
-TARGET_NAME := guess_animal
+# Nama file executable yang akan dihasilkan
+BIN_NAME = Game.exe
 
-# Direktori
-SRCDIR_BODY := body
-SRCDIR_ROOT := .
-HEADERDIR   := header
-OBJDIR      := obj
-TARGETDIR   := dist
+#---[ 2. Konfigurasi File (Otomatis) ]----------------------------------------
 
-# Flags untuk compiler
-# -Wall: Menampilkan semua peringatan (praktik terbaik)
-# -g: Menyertakan informasi debug untuk GDB
-# -I$(HEADERDIR): Memberi tahu compiler di mana mencari file header (.h)
-CFLAGS := -Wall -g -I$(HEADERDIR)
+# Direktori tempat file sumber (.c) berada
+SRC_DIRS = . body
 
-# Flags untuk linker (jika Anda perlu menautkan library seperti -lm)
-LDFLAGS :=
+# Secara otomatis menemukan SEMUA file .c di direktori yang ditentukan
+SOURCES = $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))
 
-#==============================================================================
-# Otomatisasi Pencarian File
-#==============================================================================
+#---[ 3. Pengaturan Kompilasi ]------------------------------------------------
 
-# Menemukan semua file .c di direktori body dan main.c di root
-SOURCES := $(wildcard $(SRCDIR_BODY)/*.c) $(SRCDIR_ROOT)/main.c
+# Flag untuk compiler
+CFLAGS = -Wall -g -Iheader -std=c11
 
-# Membuat daftar file objek (.o) yang sesuai, menempatkannya di OBJDIR
-# Contoh: body/utils.c -> obj/utils.o
-OBJECTS := $(patsubst $(SRCDIR_BODY)/%.c,$(OBJDIR)/%.o,$(filter %body/%.c,$(SOURCES)))
-OBJECTS += $(patsubst $(SRCDIR_ROOT)/%.c,$(OBJDIR)/%.o,$(filter %main.c,$(SOURCES)))
+# Library yang akan di-link (jika ada)
+LIBS =
 
-# File eksekusi akhir dengan path lengkap
-TARGET := $(TARGETDIR)/$(TARGET_NAME)
+#---[ 4. Aturan Build ]-------------------------------------------------------
 
-# VPATH memberitahu 'make' di mana harus mencari file sumber
-VPATH = $(SRCDIR_BODY):$(SRCDIR_ROOT)
+# Target Phony (bukan nama file, tetapi nama untuk sebuah perintah)
+.PHONY: all clean run
 
-#==============================================================================
-# Aturan (Rules) Makefile
-#==============================================================================
+# Aturan default: kompilasi dan buat executable
+all: $(BIN_NAME)
 
-# Aturan default: yang pertama kali dijalankan saat mengetik 'make'
-all: $(TARGET)
+# Aturan untuk membuat executable dalam satu langkah tunggal
+$(BIN_NAME): $(SOURCES)
+	@echo "--> Mengompilasi semua sumber menjadi: $(BIN_NAME)"
+	$(CC) $(SOURCES) -o $(BIN_NAME) $(CFLAGS) $(LIBS)
+	@echo "--> Build berhasil!"
 
-# Aturan untuk menautkan (linking) semua file objek menjadi file eksekusi akhir
-$(TARGET): $(OBJECTS)
-	@mkdir -p $(TARGETDIR)
-	@echo "LD   $(notdir $@)"
-	$(CC) $(OBJECTS) -o $@ $(LDFLAGS)
-	@echo "Build successful! Executable is at $(TARGET)"
-
-# Aturan pola untuk mengkompilasi file .c menjadi file objek .o
-# Ini menangani file dari direktori manapun yang didefinisikan di VPATH
-$(OBJDIR)/%.o: %.c
-	@mkdir -p $(OBJDIR)
-	@echo "CC   $<"
-	$(CC) $(CFLAGS) -c $< -o $@
-
-# Aturan untuk membersihkan file hasil build
-clean:
-	@echo "Cleaning up project..."
-	@rm -rf $(OBJDIR) $(TARGETDIR)
-	@echo "Cleanup complete."
-
-# Aturan untuk membangun ulang proyek (bersihkan lalu bangun lagi)
-re: clean all
-
-# Aturan untuk menjalankan program setelah kompilasi
+# Aturan untuk menjalankan program
+# Ini akan pertama-tama memastikan program sudah ter-compile, lalu menjalankannya.
 run: all
-	@echo "Running the application..."
-	./$(TARGET)
+	@echo "--> Menjalankan program..."
+	@echo.
+	./$(BIN_NAME)
 
-#==============================================================================
-# Phony Targets (Target yang bukan nama file)
-#==============================================================================
-.PHONY: all clean re run
+# Aturan untuk membersihkan proyek
+clean:
+	@echo "--> Membersihkan proyek..."
+	-rm -f $(BIN_NAME)
+	@echo "--> Pembersihan selesai."
