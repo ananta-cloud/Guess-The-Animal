@@ -1,0 +1,9 @@
+1|Anjing|1|1749997049
+6|Jerapah|1|1749814388
+5|Apakah hewan ini memiliki leher yang panjang?|0|1749814123
+4|Apakah hewan ini termasuk hewan ternak?|0|1749813682
+3|Ayam|1|1749813550
+2|Anjing|1|1749813448
+1|Apakah hewan ini menggong-gong?|0|1749813426
+1|Apakah hewan ini memiliki ciri khas pada bentuk hidungnya?|0|1749996717
+2|Babi|1|1749996742

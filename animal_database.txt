@@ -29,6 +29,10 @@ Apakah hewan ini berwarna hitam dan putih serta suka memakan bambu?
 Panda
 *
 *
+Apakah hewan ini memiliki leher yang panjang?
+Jerapah
+*
+*
 Sapi
 *
 *
@@ -42,6 +46,18 @@ Monyet
 *
 Apakah hewan ini termasuk hewan pengerat?
 Hamster
+*
+*
+Apakah hewan ini menggong-gong?
+Anjing
+*
+*
+Apakah hewan ini termasuk hewan ternak?
+Apakah hewan ini memiliki ciri khas pada bentuk hidungnya?
+Babi
+*
+*
+Kambing
 *
 *
 Kucing

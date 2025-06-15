@@ -171,7 +171,7 @@ TreeNodePtr create_default_tree() {
     vertebrata_land_mammal_node->no_ans = mammal_small_node;
     
     // LEVEL 4d: Vertebrata Darat Non-Mamalia - Kemampuan terbang
-    strcpy(vertebrata_land_nomammal_node->text, "Apakah hewan ini bertelur dan memiliki sayap untuk terbang?");
+    strcpy(vertebrata_land_nomammal_node->text, "Apakah hewan ini bertelur dan memiliki sayap?");
     vertebrata_land_nomammal_node->yes_ans = bird_node;
     vertebrata_land_nomammal_node->no_ans = reptile_node;
     
