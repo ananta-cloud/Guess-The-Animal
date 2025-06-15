@@ -5,6 +5,7 @@
 GameHistory* game_history_head = NULL;
 UndoStack* undo_stack_top = NULL;
 PlayerQueue* player_queue = NULL;
+QuestionSuggestion* suggestion_list = NULL;
 
 // Utuk menghapus spasi pada string
 void trim_string(char* str) {
@@ -47,8 +48,4 @@ int get_answer() {
         }
     }
     return -1; // Error saat membaca input
-}
-
-void print_separator() {
-    printf("==================================================\n");
 }

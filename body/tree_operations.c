@@ -441,8 +441,9 @@ int ask_if_animal(TreeNodePtr start) {
 }
 
 void build_question(TreeNodePtr start) {
+    
     char new_animal[MAX_TEXT_LENGTH];
-    char new_question[MAX_TEXT_LENGTH];
+    char new_question[MAX_QUESTION_LENGTH];
     char temp_input[MAX_TEXT_LENGTH + 10];
     
     // Save current state for undo functionality
@@ -467,7 +468,7 @@ void build_question(TreeNodePtr start) {
         new_question[MAX_TEXT_LENGTH - 1] = '\0';
         trim_string(new_question);
     } else {
-        snprintf(new_question, MAX_TEXT_LENGTH, "Apakah ini %s?", new_animal);
+        snprintf(new_question, MAX_QUESTION_LENGTH, "Apakah ini %s?", new_animal);
     }
     
     TreeNodePtr yes_node = (TreeNodePtr)malloc(sizeof(TreeNode));

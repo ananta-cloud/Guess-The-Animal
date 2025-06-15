@@ -222,11 +222,11 @@ void display_player_rankings() {
         if (players[i]->games_played > 0) {
             success_rate = ((double)players[i]->correct_guesses / players[i]->games_played) * 100.0;
         }
-        char rank_icon[10];
+        char rank_icon[16];
         if (i == 0) strcpy(rank_icon, "🥇");
         else if (i == 1) strcpy(rank_icon, "🥈");
         else if (i == 2) strcpy(rank_icon, "🥉");
-        else sprintf(rank_icon, "%d", i + 1);
+        else snprintf(rank_icon, sizeof(rank_icon), "%d", i + 1);
         printf("%-5s %-20s %-8d %-8d %-12.1f\n", 
                rank_icon,
                players[i]->name,

@@ -7,8 +7,9 @@
 #include <ctype.h>
 #include <time.h>
 
-#define MAX_TEXT_LENGTH 256
-#define MAX_NAME_LENGTH 128
+#define MAX_TEXT_LENGTH 312
+#define MAX_NAME_LENGTH 255
+#define MAX_QUESTION_LENGTH (MAX_TEXT_LENGTH + 20)
 #define DEFAULT_DB_FILE "animal_database.txt" // File untuk menyimpan data hewan
 #define BACKUP_DB_FILE "animal_database_backup.txt" // File untuk backup data di database hewan
 #define HISTORY_FILE "game_history.txt" // File untuk menyimpan riwayat permainan

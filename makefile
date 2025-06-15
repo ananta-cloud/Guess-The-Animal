@@ -1,5 +1,5 @@
 # Makefile Sederhana untuk Proyek C/C++
-# Versi ini tidak membuat direktori atau file perantara (.o).
+# Versi ini memaksa re-kompilasi setiap saat.
 
 #---[ 1. Konfigurasi Proyek ]--------------------------------------------------
 
@@ -7,7 +7,7 @@
 CC = gcc
 
 # Nama file executable yang akan dihasilkan
-BIN_NAME = Game.exe
+BIN_NAME = Guess-The-Animal.exe
 
 #---[ 2. Konfigurasi File (Otomatis) ]----------------------------------------
 
@@ -34,7 +34,9 @@ LIBS =
 all: $(BIN_NAME)
 
 # Aturan untuk membuat executable dalam satu langkah tunggal
-$(BIN_NAME): $(SOURCES)
+# MODIFIKASI: Menambahkan 'clean' sebagai dependensi pertama.
+# Ini akan memaksa 'make' untuk menghapus file lama sebelum kompilasi.
+$(BIN_NAME): clean $(SOURCES)
 	@echo "--> Mengompilasi semua sumber menjadi: $(BIN_NAME)"
 	$(CC) $(SOURCES) -o $(BIN_NAME) $(CFLAGS) $(LIBS)
 	@echo "--> Build berhasil!"

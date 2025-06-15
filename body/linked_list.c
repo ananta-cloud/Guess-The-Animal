@@ -54,7 +54,7 @@ void save_history_to_file() {
     
     GameHistory* current = game_history_head;
     while (current != NULL) {
-        fprintf(file, "%d|%s|%d|%ld\n", 
+        fprintf(file, "%d|%s|%d|%lld\n", 
                 current->game_number,
                 current->guessed_animal,
                 current->was_correct,
