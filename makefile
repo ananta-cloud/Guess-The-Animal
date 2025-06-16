@@ -1,5 +1,5 @@
-# Makefile Sederhana untuk Proyek C/C++
-# Versi ini memaksa re-kompilasi setiap saat.
+# Makefile Sederhana untuk Proyek C dengan Raylib
+# Disesuaikan untuk MinGW di Windows
 
 #---[ 1. Konfigurasi Proyek ]--------------------------------------------------
 
@@ -19,11 +19,16 @@ SOURCES = $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))
 
 #---[ 3. Pengaturan Kompilasi ]------------------------------------------------
 
-# Flag untuk compiler
+# Flag untuk compiler:
+# -Wall : Tampilkan semua peringatan
+# -g    : Sertakan informasi debug
+# -Iheader: Beritahu compiler di mana mencari file header (.h)
 CFLAGS = -Wall -g -Iheader -std=c11
 
-# Library yang akan di-link (jika ada)
-LIBS =
+# Library yang akan di-link:
+# PERBAIKAN: Menautkan langsung ke file library untuk mengatasi "cannot find"
+# -lopengl32, -lgdi32, -lwinmm adalah dependensi sistem yang dibutuhkan Raylib
+LIBS = header/raylib.h body/libraylib.a -lopengl32 -lgdi32 -lwinmm
 
 #---[ 4. Aturan Build ]-------------------------------------------------------
 
@@ -33,10 +38,8 @@ LIBS =
 # Aturan default: kompilasi dan buat executable
 all: $(BIN_NAME)
 
-# Aturan untuk membuat executable dalam satu langkah tunggal
-# MODIFIKASI: Menambahkan 'clean' sebagai dependensi pertama.
-# Ini akan memaksa 'make' untuk menghapus file lama sebelum kompilasi.
-$(BIN_NAME): clean $(SOURCES)
+# Aturan untuk membuat executable
+$(BIN_NAME): $(SOURCES)
 	@echo "--> Mengompilasi semua sumber menjadi: $(BIN_NAME)"
 	$(CC) $(SOURCES) -o $(BIN_NAME) $(CFLAGS) $(LIBS)
 	@echo "--> Build berhasil!"
@@ -48,8 +51,7 @@ run: all
 	@echo.
 	./$(BIN_NAME)
 
-# Aturan untuk membersihkan proyek
+# Aturan untuk membersihkan file hasil kompilasi
 clean:
-	@echo "--> Membersihkan proyek..."
-	-rm -f $(BIN_NAME)
-	@echo "--> Pembersihan selesai."
+	@echo "--> Membersihkan file lama..."
+	@del /F /Q $(subst /,\,$(BIN_NAME)) 2>nul || rm -f $(BIN_NAME)

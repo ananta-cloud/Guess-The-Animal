@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
@@ -38,7 +39,7 @@ typedef struct UndoStack {
     char original_text[MAX_TEXT_LENGTH];
     TreeNodePtr original_yes;
     TreeNodePtr original_no;
-    char operation_type[20]; // "LEARN"
+    char operation_type[20];
     struct UndoStack* next;
 } UndoStack;
 extern UndoStack* undo_stack_top;

@@ -373,17 +373,17 @@ int load_or_create_database(TreeNodePtr* head) {
     FILE* in_file = fopen(DEFAULT_DB_FILE, "r");
     
     if (in_file != NULL) {
-        printf("Memuat database yang sudah ada...\n");
+        //printf("Memuat database yang sudah ada...\n");
         if (read_from_file(head, in_file) == 0) {
-            printf("Database berhasil dimuat!\n");
+           // printf("Database berhasil dimuat!\n");
             fclose(in_file);
             return 0;
         } else {
-            printf("Database rusak, membuat database baru...\n");
+           // printf("Database rusak, membuat database baru...\n");
             fclose(in_file);
         }
     } else {
-        printf("Database tidak ditemukan, membuat database baru...\n");
+        //printf("Database tidak ditemukan, membuat database baru...\n");
     }
     
     *head = create_default_tree();
@@ -392,7 +392,7 @@ int load_or_create_database(TreeNodePtr* head) {
     }
     
     if (auto_save_tree(*head) == 0) {
-        printf("Database baru berhasil dibuat!\n");
+        //printf("Database baru berhasil dibuat!\n");
     }
     
     return 0;
