@@ -24,20 +24,19 @@ int main()
     int main_choice;
 
     // Initialize system
-    // initialize_system();
+    initialize_system();
 
     // Load or create database
     if (load_or_create_database(&root) != 0)
     {
-        printf("Error: Gagal memuat database!\n");
+        print_centered("Error: Gagal memuat database!");
         return 1;
     }
 
     // Main program loop
     while (1)
     {
-        print_main_menu();
-        main_choice = get_menu_choice(6);
+        main_choice = get_menu_selection(6, print_main_menu);
 
         switch (main_choice)
         {
@@ -58,14 +57,14 @@ int main()
             ready();
             break;
         case 6:
-            printf("\n");
             display_session_summary();
             print_goodbye();
             cleanup_system();
             free_tree(root);
             return 0;
         default:
-            printf("Pilihan tidak valid!\n");
+            print_centered("Pilihan tidak valid!");
+            ready();
         }
     }
 }
@@ -103,8 +102,7 @@ void handle_game_menu()
 
     while (continue_playing)
     {
-        print_game_menu();
-        game_choice = get_menu_choice(5);
+        game_choice = get_menu_selection(5, print_game_menu);
 
         switch (game_choice)
         {
@@ -118,9 +116,13 @@ void handle_game_menu()
             } while (play_again());
             break;
         case 3:
-            print_header("🐾 DAFTAR SEMUA HEWAN");
+            print_header("DAFTAR SEMUA HEWAN");
             display_all_animals(root);
-            printf("\nTotal hewan dalam database: %d\n", count_total_animals(root));
+            char buffer[100];
+            sprintf(buffer, "Total hewan dalam database: %d", count_total_animals(root));
+            printf("\n");             
+            print_aligned_prompt(buffer);
+            printf("\n");
             ready();
             break;
         case 4:
@@ -145,71 +147,80 @@ void play_single_round()
     TreeNodePtr last_node = NULL;
     Player *current_player = NULL;
     int was_correct = 0;
+    clear_screen();
+    char header_buffer[50];
+    sprintf(header_buffer, "GAME #%d", game_counter);
+    print_header(header_buffer);
 
-    printf("\n");
-    print_separator();
-    printf("GAME #%d\n", game_counter);
-    print_separator();
-
-    // Handle multiplayer turn
+    // Handle giliran multiplayer
     if (is_multiplayer)
     {
         current_player = peek_current_player(player_queue);
         if (current_player == NULL)
         {
-            printf("Tidak ada player aktif!\n");
+            print_centered("Tidak ada player aktif!");
+            ready();
             return;
         }
         start_player_turn(current_player);
     }
-    else
+    else // Mode Single Player
     {
-        printf("Pikirkan seekor hewan, dan saya akan mencoba menebaknya!\n");
-        ready();
+        print_aligned_prompt("Pikirkan seekor hewan, dan saya akan mencoba menebaknya!");
+        printf("\n");
+        print_aligned_prompt("Tekan ENTER untuk memulai...");
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF)
+        {
+        }
+        getchar();
+        printf("\n");
     }
 
-    // Start the guessing process
+    // Mulai proses menebak
     choice(root, &last_node);
 
     if (last_node != NULL)
     {
         was_correct = ask_if_animal(last_node);
-
         if (was_correct)
         {
-            printf("\nYeay! Saya berhasil menebak hewan Anda!\n");
-            printf("Saya memang pintar, kan?\n");
+            printf("\n");
+            print_aligned_prompt("Yeay! Saya berhasil menebak hewan Anda!");
+            printf("\n");
+            print_aligned_prompt("Saya memang pintar, kan?");
+            printf("\n");
         }
         else
         {
-            printf("\nHmm, saya belum bisa menebak dengan benar.\n");
-            printf("Mari bantu saya belajar!\n\n");
+            printf("\n");
+            print_aligned_prompt("Hmm, saya belum bisa menebak dengan benar.");
+            printf("\n");
+            print_aligned_prompt("Mari bantu saya belajar!");
+            printf("\n\n");
+
             build_question(last_node);
 
-            // Auto-save after learning
             if (auto_save_tree(root) == 0)
             {
-                printf("Pembelajaran berhasil disimpan!\n");
+                printf("\n");
+                print_aligned_prompt("Pembelajaran berhasil disimpan!");
+                printf("\n");
             }
         }
-
-        // Add to game history
         add_game_history(game_counter, last_node->text, was_correct);
 
-        // Update player stats if multiplayer
         if (is_multiplayer && current_player != NULL)
         {
             end_player_turn(current_player, was_correct);
-            rotate_to_next_player(); // Move to next player
+            rotate_to_next_player();
         }
-
         game_counter++;
     }
     else
     {
-        printf("Error: Tidak dapat memproses permainan!\n");
+        print_centered("Error: Tidak dapat memproses permainan!");
     }
-
     printf("\n");
     ready();
 }
@@ -221,8 +232,7 @@ void handle_statistics_menu()
 
     while (continue_stats)
     {
-        print_statistics_menu();
-        stats_choice = get_menu_choice(6);
+        stats_choice = get_menu_selection(6, print_statistics_menu);
 
         switch (stats_choice)
         {
@@ -275,9 +285,7 @@ void handle_admin_menu()
 
     while (continue_admin)
     {
-        print_admin_menu();
-        admin_choice = get_menu_choice(7);
-
+        admin_choice = get_menu_selection(7, print_admin_menu);
         switch (admin_choice)
         {
         case 1:
@@ -309,20 +317,16 @@ void handle_admin_menu()
             break;
 
         case 4:
-            if (confirm_action("reset semua data"))
+            reset_all_data();
+            free_tree(root);
+            root = create_default_tree();
+            if (root != NULL)
             {
-                reset_all_data();
-
-                // Recreate default tree
-                free_tree(root);
-                root = create_default_tree();
-                if (root != NULL)
-                {
-                    auto_save_tree(root);
-                    printf("Database default berhasil dibuat ulang!\n");
-                }
-                game_counter = 1;
+                auto_save_tree(root);
+                print_aligned_prompt("Database default berhasil dibuat ulang!");
+                printf("\n");
             }
+            game_counter = 1;
             ready();
             break;
 
@@ -359,7 +363,7 @@ void handle_admin_menu()
 
 void display_game_info()
 {
-    printf("ℹ️  INFORMASI GAME:\n");
+    printf("   INFORMASI GAME:\n");
     printf("   Game Counter: %d\n", game_counter);
     printf("   Mode: %s\n", is_multiplayer ? "Multiplayer" : "Single Player");
     printf("   Total Hewan: %d\n", count_total_animals(root));

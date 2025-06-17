@@ -28,7 +28,7 @@ CFLAGS = -Wall -g -Iheader -std=c11
 # Library yang akan di-link:
 # PERBAIKAN: Menautkan langsung ke file library untuk mengatasi "cannot find"
 # -lopengl32, -lgdi32, -lwinmm adalah dependensi sistem yang dibutuhkan Raylib
-LIBS = header/raylib.h body/libraylib.a -lopengl32 -lgdi32 -lwinmm
+LIBS = -lopengl32 -lgdi32 -lwinmm
 
 #---[ 4. Aturan Build ]-------------------------------------------------------
 

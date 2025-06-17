@@ -2,13 +2,19 @@
 #define UTILS_H
 
 #include "common_types.h"
+#include <conio.h>
 
 // Menu and UI functions
-void print_main_menu();
-void print_game_menu();
-void print_statistics_menu();
-void print_admin_menu();
-int get_menu_choice(int max_choice);
+void print_main_menu(int highlighted_option);
+void print_game_menu(int highlighted_option);
+void print_statistics_menu(int highlighted_option);
+void print_admin_menu(int highlighted_option);
+int get_menu_selection(int max_choice, void (*print_menu_func)(int));
+void print_centered(const char* text);
+void prompt_centered(const char* text);
+void print_aligned_prompt(const char* prompt);
+void clear_screen();
+int get_terminal_width();
 
 // Game flow functions
 void print_welcome();

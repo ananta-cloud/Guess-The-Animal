@@ -1,5 +1,9 @@
 #include "../header/tree_operations.h"
 #include "../header/stack_operations.h"
+#include "../header/utils.h"
+
+// Fungsi static untuk display animal
+static void display_all_animals_recursive(TreeNodePtr root, int padding);
 
 TreeNodePtr create_default_tree() {
     // Alokasi memori untuk semua node
@@ -403,21 +407,30 @@ void choice(TreeNodePtr start, TreeNodePtr* last_accessed) {
     
     *last_accessed = start;
     
+    // Jika node ini adalah jawaban (daun), tidak ada pertanyaan, langsung kembali.
     if (start->yes_ans == NULL && start->no_ans == NULL) {
         return;
     }
     
+    // Loop untuk memastikan pengguna memberikan jawaban yang valid (yes/no)
     while (1) {
-        printf("%s ", start->text);
+        print_aligned_prompt(start->text);
+        printf(" "); // Menambahkan spasi setelah tanda tanya agar jawaban tidak menempel.
         user_choice = get_answer();
-        
-        if (user_choice == 0) {
+        if (user_choice == 0) { // Jawaban "no"
             choice(start->no_ans, last_accessed);
             break;
-        } else if (user_choice == 1) {
+        } else if (user_choice == 1) { // Jawaban "yes"
             choice(start->yes_ans, last_accessed);
             break;
         } else {
+            const char* border_reference = "=============================================================================================";
+            int terminal_width = get_terminal_width();
+            int reference_len = strlen(border_reference);
+            int padding = (terminal_width > reference_len) ? (terminal_width - reference_len) / 2 : 0;
+            
+            // Cetak padding lalu pesan error
+            for(int i = 0; i < padding; i++) { printf(" "); }
             printf("Jawaban tidak valid. Silakan jawab 'yes' atau 'no'.\n");
         }
     }
@@ -425,16 +438,20 @@ void choice(TreeNodePtr start, TreeNodePtr* last_accessed) {
 
 int ask_if_animal(TreeNodePtr start) {
     int user_decision;
-    
+    char final_question[MAX_QUESTION_LENGTH]; 
     while (1) {
-        printf("Apakah hewan Anda adalah: %s? ", start->text);
+        snprintf(final_question, sizeof(final_question), "Apakah hewan Anda adalah: %s?", start->text);
+        print_aligned_prompt(final_question);
+        printf(" ");
         user_decision = get_answer();
-        
-        if (user_decision == 0) {
-            return 0;
-        } else if (user_decision == 1) {
-            return 1;
+        if (user_decision == 0 || user_decision == 1) {
+            return user_decision; 
         } else {
+            const char* border_reference = "=============================================================================================";
+            int terminal_width = get_terminal_width();
+            int reference_len = strlen(border_reference);
+            int padding = (terminal_width > reference_len) ? (terminal_width - reference_len) / 2 : 0;
+            for(int i = 0; i < padding; i++) { printf(" "); }
             printf("Jawaban tidak valid. Silakan jawab 'yes' atau 'no'.\n");
         }
     }
@@ -444,12 +461,11 @@ void build_question(TreeNodePtr start) {
     
     char new_animal[MAX_TEXT_LENGTH];
     char new_question[MAX_QUESTION_LENGTH];
-    char temp_input[MAX_TEXT_LENGTH + 10];
+    char temp_input[MAX_QUESTION_LENGTH];
     
-    // Save current state for undo functionality
+    // Simpan state saat ini untuk fungsionalitas undo
     save_current_state_before_learning(start);
-    
-    printf("Hewan apa yang Anda pikirkan? ");
+    print_aligned_prompt("Hewan apa yang Anda pikirkan? ");
     if (fgets(temp_input, sizeof(temp_input), stdin) != NULL) {
         strncpy(new_animal, temp_input, MAX_TEXT_LENGTH - 1);
         new_animal[MAX_TEXT_LENGTH - 1] = '\0';
@@ -458,44 +474,50 @@ void build_question(TreeNodePtr start) {
         strcpy(new_animal, "Hewan Tidak Diketahui");
     }
     
-    printf("\nBantu saya belajar! Buatlah pertanyaan yang membedakan:\n");
+    const char* border_reference = "=============================================================================================";
+    int terminal_width = get_terminal_width();
+    int reference_len = strlen(border_reference);
+    int padding = (terminal_width > reference_len) ? (terminal_width - reference_len) / 2 : 0;
+
+    printf("\n");
+    for(int i = 0; i < padding; i++) { printf(" "); }
+    printf("Bantu saya belajar! Buatlah pertanyaan yang membedakan:\n");
+    for(int i = 0; i < padding; i++) { printf(" "); }
     printf("   - Jawaban 'YES' untuk: %s\n", new_animal);
-    printf("   - Jawaban 'NO' untuk: %s\n", start->text);
-    printf("\nPertanyaan Anda: ");
+    for(int i = 0; i < padding; i++) { printf(" "); }
+    printf("   - Jawaban 'NO' untuk : %s\n", start->text);
+    printf("\n");
+
+    // Gunakan perataan untuk prompt pertanyaan
+    print_aligned_prompt("Pertanyaan Anda: ");
     
     if (fgets(temp_input, sizeof(temp_input), stdin) != NULL) {
-        strncpy(new_question, temp_input, MAX_TEXT_LENGTH - 1);
-        new_question[MAX_TEXT_LENGTH - 1] = '\0';
+        strncpy(new_question, temp_input, MAX_QUESTION_LENGTH - 1);
+        new_question[MAX_QUESTION_LENGTH - 1] = '\0';
         trim_string(new_question);
     } else {
         snprintf(new_question, MAX_QUESTION_LENGTH, "Apakah ini %s?", new_animal);
     }
     
+    // Logika untuk membuat node baru
     TreeNodePtr yes_node = (TreeNodePtr)malloc(sizeof(TreeNode));
-    if (yes_node == NULL) {
-        printf("Error: Tidak cukup memory!\n");
-        return;
-    }
+    if (yes_node == NULL) { /* ... error handling ... */ return; }
     strcpy(yes_node->text, new_animal);
     yes_node->yes_ans = NULL;
     yes_node->no_ans = NULL;
-    
     TreeNodePtr no_node = (TreeNodePtr)malloc(sizeof(TreeNode));
-    if (no_node == NULL) {
-        printf("Error: Tidak cukup memory!\n");
-        free(yes_node);
-        return;
-    }
+    if (no_node == NULL) { /* ... error handling ... */ free(yes_node); return; }
     strcpy(no_node->text, start->text);
     no_node->yes_ans = start->yes_ans;
     no_node->no_ans = start->no_ans;
-    
     strcpy(start->text, new_question);
     start->yes_ans = yes_node;
     start->no_ans = no_node;
-    
-    printf("Terima kasih! Saya telah belajar sesuatu yang baru!\n");
-    printf("Tips: Anda dapat membatalkan pembelajaran ini dengan fitur 'Undo'\n");
+    printf("\n");
+    print_aligned_prompt("Terima kasih! Saya telah belajar sesuatu yang baru!");
+    printf("\n");
+    print_aligned_prompt("Tips: Anda dapat membatalkan pembelajaran ini dengan fitur 'Undo'");
+    printf("\n");
 }
 
 int count_total_animals(TreeNodePtr root) {
@@ -517,45 +539,91 @@ int calculate_tree_depth(TreeNodePtr root) {
     return 1 + (left_depth > right_depth ? left_depth : right_depth);
 }
 
-void display_all_animals(TreeNodePtr root) {
-    if (root == NULL) return;
-    
+void display_all_animals(TreeNodePtr root)
+{
+    const char* border_reference = "=============================================================================================";
+    int terminal_width = get_terminal_width();
+    int reference_len = strlen(border_reference);
+    int padding = (terminal_width > reference_len) ? (terminal_width - reference_len) / 2 : 0;
+    display_all_animals_recursive(root, padding);
+}
+
+// Fungsi helper rekursif "internal" dengan kata kunci `static`.
+static void display_all_animals_recursive(TreeNodePtr root, int padding)
+{
+    if (root == NULL) {
+        return;
+    }
+
     if (root->yes_ans == NULL && root->no_ans == NULL) {
+        for (int i = 0; i < padding; i++) {
+            printf(" ");
+        }
         printf("%s\n", root->text);
         return;
     }
-    
-    display_all_animals(root->yes_ans);
-    display_all_animals(root->no_ans);
+
+    display_all_animals_recursive(root->yes_ans, padding);
+    display_all_animals_recursive(root->no_ans, padding);
 }
 
+// Di dalam file body/tree_operations.c
+
 void iterative_preorder_traversal(TreeNodePtr root) {
-    if (root == NULL) return;
-    
+    clear_screen();
+    print_header("Struktur Tree (Pre-order)");
+
+    if (root == NULL) {
+        print_centered("Tree kosong!");
+        return;
+    }
+
+    // --- PENYESUAIAN PERATAAN DI SINI ---
+
+    // 1. Hitung padding utama untuk seluruh blok tree.
+    const char* border_reference = "=============================================================================================";
+    int terminal_width = get_terminal_width();
+    int reference_len = strlen(border_reference);
+    int master_padding = 0;
+    if (terminal_width > reference_len) {
+        master_padding = (terminal_width - reference_len) / 2;
+    }
+
+    // --- Sisa logika traversal tetap sama, hanya pencetakannya diubah ---
+
     TreeStack* stack = NULL;
-    push_tree_node(&stack, root);
-    
-    printf("\n=== Tree Structure (Pre-order) ===\n");
-    int level = 0;
-    
+    push_tree_node(&stack, root, 0);
+
     while (!is_tree_stack_empty(stack)) {
-        TreeNodePtr current = pop_tree_node(&stack);
-        
-        // Print with indentation based on level
-        for (int i = 0; i < level; i++) printf("  ");
-        
-        if (current->yes_ans == NULL && current->no_ans == NULL) {
-            printf("Animal: %s\n", current->text);
-        } else {
-            printf("Question: %s\n", current->text);
+        int current_level;
+        TreeNodePtr current_node = pop_tree_node(&stack, &current_level);
+
+        // 2. Cetak padding utama di setiap baris.
+        for (int i = 0; i < master_padding; i++) {
+            printf(" ");
         }
-        
-        // Push right child first, then left child (for correct order)
-        if (current->no_ans) push_tree_node(&stack, current->no_ans);
-        if (current->yes_ans) push_tree_node(&stack, current->yes_ans);
-        
-        level++;
+
+        // Cetak indentasi internal berdasarkan level
+        for (int i = 0; i < current_level; i++) {
+            printf("    "); // 4 spasi per level
+        }
+
+        // Cetak konten node
+        if (current_node->yes_ans == NULL && current_node->no_ans == NULL) {
+            printf("- Animal: %s\n", current_node->text);
+        } else {
+            printf("|- Question: %s\n", current_node->text);
+        }
+
+        // Push anak ke stack (logika ini tidak berubah)
+        if (current_node->no_ans) {
+            push_tree_node(&stack, current_node->no_ans, current_level + 1);
+        }
+        if (current_node->yes_ans) {
+            push_tree_node(&stack, current_node->yes_ans, current_level + 1);
+        }
     }
     
     clear_tree_stack(&stack);
+    printf("\n");
 }

@@ -21,27 +21,80 @@ void add_game_history(int game_number, const char* animal, int was_correct) {
     save_history_to_file();
 }
 
+// Di dalam file body/linked_list.c
+
 void display_game_history() {
+    clear_screen();
+    print_header("Riwayat Permainan");
+
     if (game_history_head == NULL) {
-        printf("Belum ada riwayat permainan.\n");
+        print_centered("Belum ada riwayat permainan.");
         return;
     }
     
-    print_header("Riwayat Permainan");
-    printf("%-5s %-25s %-10s %-20s\n", "Game", "Hewan", "Status", "Waktu");
-    printf("-------------------------------------------------------------\n");
+    // --- PENYESUAIAN LEBAR TABEL AGAR SESUAI HEADER ---
+
+    // 1. Definisikan string referensi untuk menjadi patokan lebar total.
+    const char* border_reference = "=============================================================================================";
+    const int TOTAL_TABLE_WIDTH = strlen(border_reference);
+
+    // 2. Alokasikan lebar kolom. Kolom utama akan menyesuaikan secara dinamis.
+    const int GAME_COL_WIDTH = 5;
+    const int STATUS_COL_WIDTH = 10;
+    const int TIME_COL_WIDTH = 20;
+    // Sisa lebar untuk kolom "Hewan/Pertanyaan"
+    const int TEXT_COL_WIDTH = TOTAL_TABLE_WIDTH - GAME_COL_WIDTH - STATUS_COL_WIDTH - TIME_COL_WIDTH - 3; // -3 untuk spasi antar kolom
+
+    // 3. Buat garis pemisah sesuai lebar total yang baru.
+    char separator[TOTAL_TABLE_WIDTH + 1];
+    memset(separator, '-', TOTAL_TABLE_WIDTH);
+    separator[TOTAL_TABLE_WIDTH] = '\0';
+
+    // 4. Hitung padding untuk menengahkan seluruh blok tabel.
+    int terminal_width = get_terminal_width();
+    int padding = 0;
+    if (terminal_width > TOTAL_TABLE_WIDTH) {
+        padding = (terminal_width - TOTAL_TABLE_WIDTH) / 2;
+    }
+
+    // --- Cetak Tabel dengan Lebar dan Perataan Baru ---
+
+    // Cetak header tabel
+    for (int i = 0; i < padding; i++) { printf(" "); }
+    printf("%-*s %-*s %-*s %-*s\n", 
+           GAME_COL_WIDTH, "Game", 
+           TEXT_COL_WIDTH, "Hewan/Pertanyaan", 
+           STATUS_COL_WIDTH, "Status", 
+           TIME_COL_WIDTH, "Waktu");
     
+    // Cetak garis pemisah
+    for (int i = 0; i < padding; i++) { printf(" "); }
+    printf("%s\n", separator);
+    
+    // Cetak setiap baris data riwayat
     GameHistory* current = game_history_head;
     while (current != NULL) {
         char* status = current->was_correct ? "BENAR" : "SALAH";
         char time_str[50];
         strftime(time_str, sizeof(time_str), "%d/%m/%Y %H:%M", localtime(&current->timestamp));
         
-        printf("%-5d %-25s %-10s %-20s\n", 
-               current->game_number, 
-               current->guessed_animal, 
-               status, 
-               time_str);
+        // Logika pemotongan teks dengan lebar kolom yang baru
+        char text_to_display[TEXT_COL_WIDTH + 1];
+        if (strlen(current->guessed_animal) > TEXT_COL_WIDTH) {
+            strncpy(text_to_display, current->guessed_animal, TEXT_COL_WIDTH - 3);
+            text_to_display[TEXT_COL_WIDTH - 3] = '\0';
+            strcat(text_to_display, "...");
+        } else {
+            strcpy(text_to_display, current->guessed_animal);
+        }
+
+        // Cetak baris data
+        for (int i = 0; i < padding; i++) { printf(" "); }
+        printf("%-*d %-*s %-*s %-*s\n", 
+               GAME_COL_WIDTH, current->game_number, 
+               TEXT_COL_WIDTH, text_to_display,
+               STATUS_COL_WIDTH, status, 
+               TIME_COL_WIDTH, time_str);
         
         current = current->next;
     }
@@ -61,7 +114,6 @@ void save_history_to_file() {
                 current->timestamp);
         current = current->next;
     }
-    
     fclose(file);
 }
 
@@ -146,24 +198,37 @@ double get_success_rate() {
 
 void display_game_statistics() {
     print_header("Statistik Permainan");
+
+    const char* border_reference = "=============================================================================================";
+    int terminal_width = get_terminal_width();
+    int reference_len = strlen(border_reference);
+    int padding = (terminal_width > reference_len) ? (terminal_width - reference_len) / 2 : 0;
     
     int total_games = get_total_games();
     int correct_guesses = get_correct_guesses();
     double success_rate = get_success_rate();
-    
-    printf("Total Permainan    : %d\n", total_games);
-    printf("Tebakan Benar     : %d\n", correct_guesses);
-    printf("Tebakan Salah     : %d\n", total_games - correct_guesses);
-    printf("Tingkat Keberhasilan: %.1f%%\n", success_rate);
-    
-    if (total_games > 0) {
-        GameHistory* latest = game_history_head;
-        if (latest != NULL) {
-            char time_str[50];
-            strftime(time_str, sizeof(time_str), "%d/%m/%Y %H:%M", localtime(&latest->timestamp));
-            printf("Permainan Terakhir: %s\n", time_str);
-        }
+    for (int i = 0; i < padding; i++) { printf(" "); }
+    printf("Total Permainan      : %d\n", total_games);
+    for (int i = 0; i < padding; i++) { printf(" "); }
+    printf("Tebakan Benar        : %d\n", correct_guesses);
+
+    // Baris 3
+    for (int i = 0; i < padding; i++) { printf(" "); }
+    printf("Tebakan Salah        : %d\n", total_games - correct_guesses);
+
+    // Baris 4
+    for (int i = 0; i < padding; i++) { printf(" "); }
+    printf("Tingkat Keberhasilan : %.1f%%\n", success_rate);
+
+    // Baris 5 (jika ada data permainan)
+    if (total_games > 0 && game_history_head != NULL) {
+        char time_str[50];
+        strftime(time_str, sizeof(time_str), "%d/%m/%Y %H:%M", localtime(&game_history_head->timestamp));
+        
+        for (int i = 0; i < padding; i++) { printf(" "); }
+        printf("Permainan Terakhir   : %s\n", time_str);
     }
+    
     printf("\n");
 }
 
