@@ -1,15 +1,14 @@
-#include "stack_operations.h"
-#include "utils.h"
+#include "../header/stack_operations.h"
+#include "../header/utils.h"
 
 void push_undo_state(TreeNodePtr node, const char* original_text, 
                      TreeNodePtr original_yes, TreeNodePtr original_no, 
                      const char* operation_type) {
     UndoStack* new_undo = (UndoStack*)malloc(sizeof(UndoStack));
     if (new_undo == NULL) {
-        printf("Error: Tidak cukup memory untuk undo stack!\n");
+        print_centered("Error: Tidak cukup memory untuk undo stack!");
         return;
     }
-    
     new_undo->modified_node = node;
     strncpy(new_undo->original_text, original_text, MAX_TEXT_LENGTH - 1);
     new_undo->original_text[MAX_TEXT_LENGTH - 1] = '\0';
@@ -20,8 +19,10 @@ void push_undo_state(TreeNodePtr node, const char* original_text,
     new_undo->next = undo_stack_top;
     
     undo_stack_top = new_undo;
-    
-    printf("State disimpan untuk undo (Operasi: %s)\n", operation_type);
+    char buffer[100];
+    sprintf(buffer, "State disimpan untuk undo (Operasi: %s)", operation_type);
+    print_aligned_prompt(buffer);
+    printf("\n");
 }
 
 int pop_undo_state(TreeNodePtr* node, char* original_text, 
@@ -137,23 +138,26 @@ UndoStack* peek_undo_stack() {
     return undo_stack_top;
 }
 
-void push_tree_node(TreeStack** stack, TreeNodePtr node) {
+void push_tree_node(TreeStack** stack, TreeNodePtr node, int level) {
     TreeStack* new_stack_node = (TreeStack*)malloc(sizeof(TreeStack));
     if (new_stack_node == NULL) {
         printf("Error: Tidak cukup memory untuk tree stack!\n");
         return;
     }
-    
     new_stack_node->node = node;
+    new_stack_node->level = level;
     new_stack_node->next = *stack;
     *stack = new_stack_node;
 }
 
-TreeNodePtr pop_tree_node(TreeStack** stack) {
-    if (*stack == NULL) return NULL;
-    
+TreeNodePtr pop_tree_node(TreeStack** stack, int* level_out) {
+    if (*stack == NULL) {
+        *level_out = -1;
+        return NULL;
+    }
     TreeStack* top = *stack;
     TreeNodePtr node = top->node;
+    *level_out = top->level;
     *stack = top->next;
     free(top);
     
@@ -165,7 +169,8 @@ int is_tree_stack_empty(TreeStack* stack) {
 }
 
 void clear_tree_stack(TreeStack** stack) {
-    while (*stack != NULL) {
-        pop_tree_node(stack);
+    int dummy_level;
+    while (!is_tree_stack_empty(*stack)) {
+        pop_tree_node(stack, &dummy_level);
     }
 }

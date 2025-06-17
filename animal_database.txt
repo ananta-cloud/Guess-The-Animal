@@ -5,18 +5,10 @@ Apakah hewan ini adalah predator berbahaya dengan gigi tajam?
 Hiu
 *
 *
-Apakah tubuh nya lebih pipih dari ikan mas?
-Ikan Gurame
-*
-*
 Ikan Mas
 *
 *
 Apakah hewan ini menyusui anaknya?
-Apakah kaki hewan ini berbentuk layaknya sirip?
-Anjing Laut
-*
-*
 Paus
 *
 *
@@ -24,40 +16,8 @@ Kodok
 *
 *
 Apakah hewan ini menyusui anaknya?
-Apakah hewan ini berukuran besar (lebih besar dari manusia)?
-Apakah hewan ini berwarna hitam dan putih serta suka memakan bambu?
-Panda
-*
-*
-Apakah hewan ini memiliki leher yang panjang?
-Jerapah
-*
-*
+Apakah hewan ini berukuran besar (lebih besar dari anjing)?
 Sapi
-*
-*
-Apakah hewan ini berjalan dengan cara melompat-lompat?
-Kelinci
-*
-*
-Apakah hewan ini umumnya tinggal di hutan dan suka memanjat pohon?
-Monyet
-*
-*
-Apakah hewan ini termasuk hewan pengerat?
-Hamster
-*
-*
-Apakah hewan ini menggong-gong?
-Anjing
-*
-*
-Apakah hewan ini termasuk hewan ternak?
-Apakah hewan ini memiliki ciri khas pada bentuk hidungnya?
-Babi
-*
-*
-Kambing
 *
 *
 Kucing
@@ -65,10 +25,6 @@ Kucing
 *
 Apakah hewan ini bertelur dan memiliki sayap untuk terbang?
 Ayam
-*
-*
-Apakah hewan ini memiliki pulau habitat nya sendiri yang cukup terkenal di Indonesia?
-Komodo
 *
 *
 Ular
@@ -100,10 +56,6 @@ Semut
 *
 Apakah hewan ini memiliki delapan kaki?
 Laba-laba
-*
-*
-Apakah hewan ini kecil dan memiliki 6 kaki?
-Semut
 *
 *
 Cacing

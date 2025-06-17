@@ -3,17 +3,19 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
 
-#define MAX_TEXT_LENGTH 256
-#define MAX_NAME_LENGTH 50
-#define DEFAULT_DB_FILE "animal_database.txt"
-#define BACKUP_DB_FILE "animal_database_backup.txt"
-#define HISTORY_FILE "game_history.txt"
+#define MAX_TEXT_LENGTH 312
+#define MAX_NAME_LENGTH 255
+#define MAX_QUESTION_LENGTH (MAX_TEXT_LENGTH + 200)
+#define DEFAULT_DB_FILE "animal_database.txt" // File untuk menyimpan data hewan
+#define BACKUP_DB_FILE "animal_database_backup.txt" // File untuk backup data di database hewan
+#define HISTORY_FILE "game_history.txt" // File untuk menyimpan riwayat permainan
 
-// Tree Node for Animal Guessing
+// Tree Node untuk Menebak Hewan
 typedef struct TreeNode {
     char text[MAX_TEXT_LENGTH];
     struct TreeNode *yes_ans;
@@ -21,26 +23,28 @@ typedef struct TreeNode {
 } TreeNode;
 typedef TreeNode* TreeNodePtr;
 
-// Game History Node (Linked List)
-typedef struct GameHistory {
+// Node game history untuk linked list
+typedef struct GameHistory{
     int game_number;
     char guessed_animal[MAX_TEXT_LENGTH];
     int was_correct;
     time_t timestamp;
     struct GameHistory* next;
 } GameHistory;
+extern GameHistory* game_history_head;
 
-// Undo Stack Node
+// Node Undo untuk stack
 typedef struct UndoStack {
     TreeNodePtr modified_node;
     char original_text[MAX_TEXT_LENGTH];
     TreeNodePtr original_yes;
     TreeNodePtr original_no;
-    char operation_type[20]; // "LEARN", "MODIFY", etc.
+    char operation_type[20];
     struct UndoStack* next;
 } UndoStack;
+extern UndoStack* undo_stack_top;
 
-// Player Queue Node
+// Node Untuk Player
 typedef struct Player {
     char name[MAX_NAME_LENGTH];
     int score;
@@ -48,29 +52,29 @@ typedef struct Player {
     int correct_guesses;
     struct Player* next;
 } Player;
+
+// Node untuk Antrian Player
 typedef struct PlayerQueue {
     Player* front;
     Player* rear;
     int count;
 } PlayerQueue;
+extern PlayerQueue* player_queue;
 
-// Question Suggestion Node (Linked List)
+// Node untuk Pertanyaan
 typedef struct QuestionSuggestion {
     char question[MAX_TEXT_LENGTH];
     int usage_count;
     double success_rate;
     struct QuestionSuggestion* next;
 } QuestionSuggestion;
-
-// Global variables
-extern GameHistory* game_history_head;
-extern UndoStack* undo_stack_top;
-extern PlayerQueue* player_queue;
 extern QuestionSuggestion* suggestion_list;
 
-// Common utility functions 
+// Prototipe untuk fungsi utilitas dasar yang diperlukan untuk memproses input pengguna.
 void trim_string(char* str);
 void to_lowercase(char* str);
 int get_answer();
+void print_header(const char* title);
+void print_separator();
 
-#endif
+#endif // COMMON_TYPES_H

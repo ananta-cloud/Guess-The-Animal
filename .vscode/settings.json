@@ -55,5 +55,15 @@
   "C_Cpp_Runner.useLeakSanitizer": false,
   "C_Cpp_Runner.showCompilationTime": false,
   "C_Cpp_Runner.useLinkTimeOptimization": false,
-  "C_Cpp_Runner.msvcSecureNoWarnings": false
+  "C_Cpp_Runner.msvcSecureNoWarnings": false,
+  "files.associations": {
+    "*.embeddedhtml": "html",
+    "header.h": "c",
+    "utils.h": "c",
+    "queue_operations.h": "c",
+    "stack_operations.h": "c",
+    "tree_operations.h": "c",
+    "linked_list.h": "c",
+    "common_types.h": "c"
+  }
 }
