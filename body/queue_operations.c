@@ -50,7 +50,6 @@ void enqueue_player(PlayerQueue *queue, const char *name)
     }
     queue->count++;
     char message_buffer[256];
-    printf("\n");
     sprintf(message_buffer, "Player '%s' berhasil ditambahkan ke antrian!", name);
     print_centered(message_buffer);
     printf("\n");
@@ -339,7 +338,7 @@ int setup_multiplayer_mode()
     clear_screen();
     print_header("SETUP MODE MULTIPLAYER");
     print_aligned_prompt("Berapa jumlah player? (2-8): ");
-    printf("\n");
+    
 
     if (fgets(input, sizeof(input), stdin) != NULL)
     {
@@ -366,6 +365,7 @@ int setup_multiplayer_mode()
     char prompt_buffer[100];
     for (int i = 0; i < player_count; i++)
     {
+        printf("\n");
         sprintf(prompt_buffer, "Masukkan nama player %d: ", i + 1);
         print_aligned_prompt(prompt_buffer);
 
