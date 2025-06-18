@@ -47,9 +47,9 @@ void display_game_history() {
         return;
     }
 
-    // Isi array dengan pointer ke node
+    // Isi array dengan pointer ke node, dimulai dari terlama ke terbaru
     current = game_history_head;
-    for (int i = 0; i < total_nodes; i++) {
+    for (int i = total_nodes - 1; i >= 0; i--) {
         history_array[i] = current;
         current = current->next;
     }
@@ -80,7 +80,7 @@ void display_game_history() {
     for (int i = 0; i < padding; i++) { printf(" "); }
     printf("%s\n", separator);
     
-    // Tampilkan dari yang paling lama (game_number kecil) ke yang terbaru
+    // Tampilkan dari yang paling lama (indeks terakhir) ke yang terbaru (indeks 0)
     for (int i = 0; i < total_nodes; i++) {
         char* status = history_array[i]->was_correct ? "BENAR" : "SALAH";
         char time_str[50];
