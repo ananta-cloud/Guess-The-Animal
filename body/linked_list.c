@@ -32,34 +32,44 @@ void display_game_history() {
         return;
     }
     
-    // --- PENYESUAIAN LEBAR TABEL AGAR SESUAI HEADER ---
+    // Hitung total node
+    int total_nodes = 0;
+    GameHistory* current = game_history_head;
+    while (current != NULL) {
+        total_nodes++;
+        current = current->next;
+    }
 
-    // 1. Definisikan string referensi untuk menjadi patokan lebar total.
+    // Alokasikan array untuk menyimpan pointer ke semua node
+    GameHistory** history_array = (GameHistory**)malloc(total_nodes * sizeof(GameHistory*));
+    if (history_array == NULL) {
+        print_centered("Error: Tidak cukup memory untuk menampilkan riwayat!");
+        return;
+    }
+
+    // Isi array dengan pointer ke node
+    current = game_history_head;
+    for (int i = 0; i < total_nodes; i++) {
+        history_array[i] = current;
+        current = current->next;
+    }
+
+    // --- PENYESUAIAN LEBAR TABEL AGAR SESUAI HEADER ---
     const char* border_reference = "=============================================================================================";
     const int TOTAL_TABLE_WIDTH = strlen(border_reference);
-
-    // 2. Alokasikan lebar kolom. Kolom utama akan menyesuaikan secara dinamis.
     const int GAME_COL_WIDTH = 5;
     const int STATUS_COL_WIDTH = 10;
     const int TIME_COL_WIDTH = 20;
-    // Sisa lebar untuk kolom "Hewan/Pertanyaan"
-    const int TEXT_COL_WIDTH = TOTAL_TABLE_WIDTH - GAME_COL_WIDTH - STATUS_COL_WIDTH - TIME_COL_WIDTH - 3; // -3 untuk spasi antar kolom
+    const int TEXT_COL_WIDTH = TOTAL_TABLE_WIDTH - GAME_COL_WIDTH - STATUS_COL_WIDTH - TIME_COL_WIDTH - 3; // -3 untuk spasi
 
-    // 3. Buat garis pemisah sesuai lebar total yang baru.
     char separator[TOTAL_TABLE_WIDTH + 1];
     memset(separator, '-', TOTAL_TABLE_WIDTH);
     separator[TOTAL_TABLE_WIDTH] = '\0';
 
-    // 4. Hitung padding untuk menengahkan seluruh blok tabel.
     int terminal_width = get_terminal_width();
-    int padding = 0;
-    if (terminal_width > TOTAL_TABLE_WIDTH) {
-        padding = (terminal_width - TOTAL_TABLE_WIDTH) / 2;
-    }
+    int padding = (terminal_width > TOTAL_TABLE_WIDTH) ? (terminal_width - TOTAL_TABLE_WIDTH) / 2 : 0;
 
     // --- Cetak Tabel dengan Lebar dan Perataan Baru ---
-
-    // Cetak header tabel
     for (int i = 0; i < padding; i++) { printf(" "); }
     printf("%-*s %-*s %-*s %-*s\n", 
            GAME_COL_WIDTH, "Game", 
@@ -67,37 +77,34 @@ void display_game_history() {
            STATUS_COL_WIDTH, "Status", 
            TIME_COL_WIDTH, "Waktu");
     
-    // Cetak garis pemisah
     for (int i = 0; i < padding; i++) { printf(" "); }
     printf("%s\n", separator);
     
-    // Cetak setiap baris data riwayat
-    GameHistory* current = game_history_head;
-    while (current != NULL) {
-        char* status = current->was_correct ? "BENAR" : "SALAH";
+    // Tampilkan dari yang paling lama (game_number kecil) ke yang terbaru
+    for (int i = 0; i < total_nodes; i++) {
+        char* status = history_array[i]->was_correct ? "BENAR" : "SALAH";
         char time_str[50];
-        strftime(time_str, sizeof(time_str), "%d/%m/%Y %H:%M", localtime(&current->timestamp));
+        strftime(time_str, sizeof(time_str), "%d/%m/%Y %H:%M", localtime(&history_array[i]->timestamp));
         
-        // Logika pemotongan teks dengan lebar kolom yang baru
         char text_to_display[TEXT_COL_WIDTH + 1];
-        if (strlen(current->guessed_animal) > TEXT_COL_WIDTH) {
-            strncpy(text_to_display, current->guessed_animal, TEXT_COL_WIDTH - 3);
+        if (strlen(history_array[i]->guessed_animal) > TEXT_COL_WIDTH) {
+            strncpy(text_to_display, history_array[i]->guessed_animal, TEXT_COL_WIDTH - 3);
             text_to_display[TEXT_COL_WIDTH - 3] = '\0';
             strcat(text_to_display, "...");
         } else {
-            strcpy(text_to_display, current->guessed_animal);
+            strcpy(text_to_display, history_array[i]->guessed_animal);
         }
 
-        // Cetak baris data
-        for (int i = 0; i < padding; i++) { printf(" "); }
+        for (int j = 0; j < padding; j++) { printf(" "); }
         printf("%-*d %-*s %-*s %-*s\n", 
-               GAME_COL_WIDTH, current->game_number, 
+               GAME_COL_WIDTH, history_array[i]->game_number, 
                TEXT_COL_WIDTH, text_to_display,
                STATUS_COL_WIDTH, status, 
                TIME_COL_WIDTH, time_str);
-        
-        current = current->next;
     }
+    
+    // Bebaskan memori array
+    free(history_array);
     printf("\n");
 }
 
