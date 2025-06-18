@@ -289,11 +289,6 @@ void handle_admin_menu()
         switch (admin_choice)
         {
         case 1:
-            printf("\nINFORMASI TREE:\n");
-            printf("   Kedalaman Tree: %d level\n", calculate_tree_depth(root));
-            printf("   Total Hewan: %d\n", count_total_animals(root));
-            printf("\n");
-
             iterative_preorder_traversal(root);
             ready();
             break;
