@@ -71,10 +71,40 @@ typedef struct QuestionSuggestion {
 extern QuestionSuggestion* suggestion_list;
 
 // Prototipe untuk fungsi utilitas dasar yang diperlukan untuk memproses input pengguna.
+
+/*
+ * Menghapus spasi di awal dan akhir sebuah string.
+ * IS: String mungkin berisi spasi di awal/akhir.
+ * FS: String tidak lagi memiliki spasi di awal/akhir.
+ */
 void trim_string(char* str);
+
+/*
+ * Mengubah semua karakter dalam string menjadi huruf kecil.
+ * IS: String berisi campuran huruf besar dan kecil.
+ * FS: Semua karakter alfabet dalam string menjadi huruf kecil.
+ */
 void to_lowercase(char* str);
+
+/*
+ * Membaca input jawaban "ya" atau "tidak" dari pengguna.
+ * IS: Program menunggu input dari pengguna.
+ * FS: Mengembalikan nilai integer: 1 untuk 'ya', 0 untuk 'tidak', -1 untuk input tidak valid.
+ */
 int get_answer();
+
+/*
+ * Mencetak header judul yang terpusat di layar.
+ * IS: Layar konsol dalam keadaan apapun.
+ * FS: Sebuah header dengan judul tercetak rapi di tengah layar.
+ */
 void print_header(const char* title);
+
+/*
+ * Mencetak sebuah garis pemisah horizontal yang terpusat.
+ * IS: Layar konsol dalam keadaan apapun.
+ * FS: Sebuah garis pemisah tercetak di layar.
+ */
 void print_separator();
 
 #endif // COMMON_TYPES_H

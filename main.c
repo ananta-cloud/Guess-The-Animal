@@ -24,8 +24,8 @@ int main()
     int main_choice;
 
     // Initialize system
-    initialize_system();
-
+    //print_welcome();
+initialize_system();
     // Load or create database
     if (load_or_create_database(&root) != 0)
     {
