@@ -104,7 +104,7 @@ void clear_player_queue(PlayerQueue *queue)
     }
 
     queue->count = 0;
-    printf("Player queue telah dibersihkan.\n");
+    //printf("Player queue telah dibersihkan.\n");
 }
 
 // Menambahkan player ke game
