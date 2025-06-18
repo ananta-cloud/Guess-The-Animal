@@ -53,6 +53,7 @@ void enqueue_player(PlayerQueue *queue, const char *name)
     printf("\n");
     sprintf(message_buffer, "Player '%s' berhasil ditambahkan ke antrian!", name);
     print_centered(message_buffer);
+    printf("\n");
 }
 
 // Hapus antrian player
@@ -158,7 +159,11 @@ void update_player_score(Player *player, int points)
     if (player == NULL)
         return;
     player->score += points;
-    printf("%s mendapat %d poin! Total: %d\n", player->name, points, player->score);
+    
+    char buffer[100];
+    sprintf(buffer, "%s mendapat %d poin! Total: %d", player->name, points, player->score);
+    print_aligned_prompt(buffer);
+    printf("\n");
 }
 
 // Update stats player
@@ -334,6 +339,7 @@ int setup_multiplayer_mode()
     clear_screen();
     print_header("SETUP MODE MULTIPLAYER");
     print_aligned_prompt("Berapa jumlah player? (2-8): ");
+    printf("\n");
 
     if (fgets(input, sizeof(input), stdin) != NULL)
     {
@@ -417,8 +423,16 @@ void start_player_turn(Player *current_player)
     if (current_player == NULL)
         return;
 
-    printf("\nGILIRAN: %s\n", current_player->name);
-    printf("Pikirkan seekor hewan, dan saya akan mencoba menebaknya!\n\n");
+    char buffer[100];
+    
+    // Mencetak baris GILIRAN dengan perataan
+    sprintf(buffer, "GILIRAN: %s", current_player->name);
+    print_aligned_prompt(buffer);
+    printf("\n");
+
+    // Mencetak baris instruksi dengan perataan
+    print_aligned_prompt("Pikirkan seekor hewan, dan saya akan mencoba menebaknya!");
+    printf("\n\n");
 }
 
 // Untuk akhir giliran player
@@ -427,12 +441,29 @@ void end_player_turn(Player *current_player, int was_correct)
     if (current_player == NULL)
         return;
 
+    // Bagian update_player_stats akan secara otomatis memanggil
+    // update_player_score yang sudah kita rapikan di langkah berikutnya.
     update_player_stats(current_player, was_correct);
 
-    printf("\nStatistik %s:\n", current_player->name);
-    printf("   Skor: %d\n", current_player->score);
-    printf("   Games: %d\n", current_player->games_played);
-    printf("   Benar: %d\n", current_player->correct_guesses);
+    char buffer[100];
+
+    // Mencetak blok statistik dengan perataan
+    printf("\n"); // Memberi jarak
+    sprintf(buffer, "Statistik %s:", current_player->name);
+    print_aligned_prompt(buffer);
+    printf("\n");
+
+    sprintf(buffer, "   Skor: %d", current_player->score);
+    print_aligned_prompt(buffer);
+    printf("\n");
+
+    sprintf(buffer, "   Games: %d", current_player->games_played);
+    print_aligned_prompt(buffer);
+    printf("\n");
+    
+    sprintf(buffer, "   Benar: %d", current_player->correct_guesses);
+    print_aligned_prompt(buffer);
+    printf("\n");
 }
 
 // Mencari player terbaik
